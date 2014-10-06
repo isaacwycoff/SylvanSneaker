@@ -7,6 +7,16 @@ using System.Text;
 
 namespace SylvanSneaker.Environment
 {
+    public enum Direction {
+        North,
+        NorthEast,
+        East,
+        SouthEast,
+        South,
+        SouthWest,
+        West,
+        NorthWest,
+    }
 
     class Ground: Element
     {
@@ -56,19 +66,66 @@ namespace SylvanSneaker.Environment
             this.ScreenY = 0;
         }
 
+        // FIXME: test method. Eventually I'll tie this to a Camera object
+        public void ShiftCamera(Direction direction)
+        {
+            var speed = 4;
+
+            switch (direction)
+            {
+                case Direction.North:
+                    this.ScreenY = this.ScreenY - speed;
+                    if (this.ScreenY < -TileSize)
+                    {
+                        this.ScreenY = this.ScreenY + TileSize;
+                        this.OffsetY = this.OffsetY - 1;
+                    }
+                    break;
+                case Direction.East:                                // this one seems to work properly
+                    this.ScreenX = this.ScreenX - speed;
+                    if (this.ScreenX < -TileSize)
+                    {
+                        this.ScreenX = this.ScreenX + TileSize;
+                        this.OffsetX = this.OffsetX + 1;
+                    }
+                    break;
+                case Direction.South:
+                    this.ScreenY = this.ScreenY + speed;
+                    if (this.ScreenY > TileSize)
+                    {
+                        this.ScreenY = this.ScreenY - TileSize;
+                        this.OffsetY = this.OffsetY + 1;
+                    }
+                    break;
+                case Direction.West:
+                    this.ScreenX = this.ScreenX - speed;
+                    if (this.ScreenX < -TileSize)
+                    {
+                        this.ScreenX = this.ScreenX + TileSize;
+                        this.OffsetX = this.OffsetX - 1;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
         public void Draw(TimeSpan timeDelta)
         {
-            int maxX = Math.Min(ScreenColumns + OffsetX, Map.GetLength(0));
-            int maxY = Math.Min(ScreenColumns + OffsetY, Map.GetLength(1));
+            int maxX = Math.Min(ScreenColumns, Map.GetLength(0) - OffsetX);
+            int maxY = Math.Min(ScreenColumns, Map.GetLength(1) - OffsetY);
 
-            for (int y = OffsetY; y < maxY; ++y)
+            for (int y = 0; y < maxY; ++y)
             {
-                for (int x = OffsetX; x < maxX; ++x)
+                for (int x = 0; x < maxX; ++x)
                 {
-                    var sourceRect = TileSet.GetRectangle(Map[x,y].DefinitionId);
+                    var tile = Map[x + OffsetX, y + OffsetY];
+
+                    var sourceRect = TileSet.GetRectangle(tile.DefinitionId);
                     var destRect = new Rectangle((x * TileSize) + ScreenX, (y * TileSize) + ScreenY, TileSize, TileSize);
 
-                    var brightness = Math.Min(Map[x, y].LightLevel, 255);
+                    var brightness = Math.Min(tile.LightLevel, 255);
 
                     var tint = new Color(brightness, brightness, brightness, 255);
                     

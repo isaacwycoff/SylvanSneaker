@@ -67,6 +67,7 @@ namespace SylvanSneaker
             this.Ground = GenerateGround();
         }
 
+        // test generator method
         private Ground GenerateGround()
         {
             var tileDefinitions = new TileDefinition[5] {
@@ -79,10 +80,9 @@ namespace SylvanSneaker
 
             var tileSet = new TileSet(TempGroundTexture, tileDefinitions, 32);
 
-            var mapSize = 16;
+            var mapSize = 32;
 
             var map = new Tile[mapSize, mapSize];
-
 
             for (int y = 0; y < mapSize; ++y)
             {
@@ -140,6 +140,8 @@ namespace SylvanSneaker
                 Exit();
 
             // TODO: Add your update logic here
+
+            this.Ground.ShiftCamera(Direction.East);
 
             base.Update(gameTime);
         }

@@ -14,6 +14,20 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+*.dll
+*.exe
+*.pdb
+*.xnb
+*.CACHE
+*.wma
+
+obj
+
+Debug
+
+
+packages
+
 # =========================
 # Operating System Files
 # =========================
@@ -26,8 +40,7 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must end with two \r
-Icon
-
+Icon
 # Thumbnails
 ._*
 
