@@ -13,9 +13,24 @@ namespace SylvanSneaker.Sandbox
         Testing,
     }
 
-    class AnimatedElement : Element
+    public class AnimatedElement : WorldElement
     {
         private Texture2D Texture { get; set; }
+
+        public Camera Camera
+        {
+            set { throw new NotImplementedException(); }
+        }
+
+        public float MapX
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public float MapY
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         private Dictionary<AnimationId, Animation> AnimationLookup { get; set; }
 
@@ -46,7 +61,8 @@ namespace SylvanSneaker.Sandbox
                 new AnimationFrame[] {
                     new AnimationFrame(30, 669, 64, 53, 250),
                     new AnimationFrame(95, 669, 63, 53, 250),
-                    new AnimationFrame(161, 670, 63, 53, 250)
+                    new AnimationFrame(161, 670, 63, 53, 250),
+                    new AnimationFrame(95, 669, 63, 53, 250),
                     }
                 );
 
@@ -58,12 +74,6 @@ namespace SylvanSneaker.Sandbox
 
             this.ScreenX = 0;
             this.ScreenY = 0;
-        }
-
-        public void Draw(GameTime time)
-        {
-            AnimationTime += time.ElapsedGameTime.Milliseconds;
-
         }
 
         public void Draw(TimeSpan timeDelta)
@@ -160,6 +170,15 @@ namespace SylvanSneaker.Sandbox
                 return index - 1;
             }
 
+        }
+
+
+
+
+        public void Update(TimeSpan timeDelta)
+        {
+
+//            throw new NotImplementedException();
         }
     }
 }

@@ -12,8 +12,11 @@ namespace SylvanSneaker
         AttackPrimary = 16,
     }
 
-    public interface Entity: Element
+    public interface Entity
     {
+        float MapX { get; }
+        float MapY { get; }
+
         void Update(TimeSpan timeDelta);
         void SendCommand(EntityCommand command);
     }

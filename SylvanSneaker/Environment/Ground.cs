@@ -18,7 +18,7 @@ namespace SylvanSneaker.Environment
         NorthWest,
     }
 
-    class Ground: Element
+    class Ground: WorldElement
     {
         private SpriteBatch SpriteBatch;
 
@@ -37,7 +37,12 @@ namespace SylvanSneaker.Environment
         private int ScreenX { get; set; }
         private int ScreenY { get; set; }
 
-        public Ground(TileSet tileSet, SpriteBatch spriteBatch, Tile[,] map)
+        public float MapX { get; private set; }         // may not be necessary, in which case we should not be a WorldElement
+        public float MapY { get; private set; }         // or WorldElement shouldn't have these
+
+        public Camera Camera { private get; set; }
+
+        public Ground(TileSet tileSet, SpriteBatch spriteBatch, Tile[,] map, Camera camera)
         {
             if (tileSet == null)
             {
@@ -55,8 +60,13 @@ namespace SylvanSneaker.Environment
             this.TileSet = tileSet;
             this.SpriteBatch = spriteBatch;
             this.Map = map;
+            this.Camera = camera;
 
             // FIXME: should be programmatically determined and should be able to change AFTER the game has started:
+            // this.TileSize = 64 * this.Camera.Scale;
+            // this.ScreenRows = (this.Camera.Height / this.TileSize) + 1;
+            // this.ScreenColumns = (this.Camera.Width / this.TileSize) + 1;
+            
             this.ScreenRows = 10;
             this.ScreenColumns = 14;
             this.TileSize = 64;
@@ -113,8 +123,12 @@ namespace SylvanSneaker.Environment
 
         public void Draw(TimeSpan timeDelta)
         {
+
             int maxX = Math.Min(ScreenColumns, Map.GetLength(0) - OffsetX);
             int maxY = Math.Min(ScreenColumns, Map.GetLength(1) - OffsetY);
+
+            // Camera.MapX
+            // Camera.MapY;
 
             for (int y = 0; y < maxY; ++y)
             {
@@ -134,6 +148,10 @@ namespace SylvanSneaker.Environment
             }
         }
 
+        public void Update(TimeSpan timeDelta)
+        {
+            // throw new NotImplementedException();
+        }
     }
 
     class Tile

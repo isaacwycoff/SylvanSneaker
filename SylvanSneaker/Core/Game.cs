@@ -1,16 +1,11 @@
-﻿#region Using Statements
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Storage;
-using SylvanSneaker.Sandbox;
+using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
-#endregion
+using SylvanSneaker.Sandbox;
+using System;
 
 namespace SylvanSneaker
 {
@@ -22,6 +17,9 @@ namespace SylvanSneaker
         GraphicsDeviceManager Graphics;
         SpriteBatch SpriteBatch;
 
+        ElementManager ElementManager;
+        TextureManager TextureManager;
+
         Song CurrentSong;
 
         SpriteFont DevFont;
@@ -32,6 +30,8 @@ namespace SylvanSneaker
 
         AnimatedElement Element;
         Ground Ground;
+
+        Camera Camera;
 
         int ScreenWidth = 800;
         int ScreenHeight = 600;
@@ -63,7 +63,14 @@ namespace SylvanSneaker
             // TODO: Add your initialization logic here
             base.Initialize();
 
+            this.TextureManager = new TextureManager(this.Content);
+            this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager);
+
+
             this.Element = new AnimatedElement(TempTexture, SpriteBatch);
+
+            this.Camera = new PlayerCamera(this.Element, 800, 600);     // FIXME: magic #s
+
             this.Ground = GenerateGround();
         }
 
@@ -92,7 +99,7 @@ namespace SylvanSneaker
                 }
             }
 
-            return new Ground(tileSet, SpriteBatch, map);
+            return new Ground(tileSet, SpriteBatch, map, this.Camera);
         }
 
         /// <summary>
@@ -141,7 +148,11 @@ namespace SylvanSneaker
 
             // TODO: Add your update logic here
 
-            this.Ground.ShiftCamera(Direction.East);
+            // this.Ground.ShiftCamera(Direction.East);
+
+            this.Ground.Update(timeElapsed);
+
+            this.Element.Update(timeElapsed);
 
             base.Update(gameTime);
         }

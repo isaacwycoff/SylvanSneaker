@@ -26,11 +26,16 @@ namespace SylvanSneaker
             }
         }
 
+        // only ELEMENTS should be drawn
+
+        /*
         public void Draw(TimeSpan timeDelta)
         {
             foreach (Entity entity in this.Entities) {
                 entity.Draw(timeDelta);
             }
+            
         }
+        */
     }
 }
