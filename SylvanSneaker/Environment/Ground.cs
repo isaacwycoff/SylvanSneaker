@@ -18,7 +18,12 @@ namespace SylvanSneaker.Environment
         NorthWest,
     }
 
-    class Ground: WorldElement
+    public interface Ground: WorldElement
+    {
+
+    }
+
+    internal class BasicGround: Ground
     {
         private SpriteBatch SpriteBatch;
 
@@ -42,7 +47,7 @@ namespace SylvanSneaker.Environment
 
         public Camera Camera { private get; set; }
 
-        public Ground(TileSet tileSet, SpriteBatch spriteBatch, Tile[,] map, Camera camera)
+        public BasicGround(TileSet tileSet, SpriteBatch spriteBatch, Tile[,] map, Camera camera)
         {
             if (tileSet == null)
             {
@@ -154,7 +159,7 @@ namespace SylvanSneaker.Environment
         }
     }
 
-    class Tile
+    public class Tile
     {
         public int DefinitionId { get; private set; }
         public int LightLevel { get; private set; }             // might want to sub-divide? idunno.
@@ -179,7 +184,7 @@ namespace SylvanSneaker.Environment
         }
     }
 
-    class TileSet
+    internal class TileSet
     {
         private TileDefinition [] Definitions { get; set; }
         private Rectangle[] SourceRectangles { get; set; }

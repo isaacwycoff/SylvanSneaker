@@ -66,40 +66,12 @@ namespace SylvanSneaker
             this.TextureManager = new TextureManager(this.Content);
             this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager);
 
-
             this.Element = new AnimatedElement(TempTexture, SpriteBatch);
 
-            this.Camera = new PlayerCamera(this.Element, 800, 600);     // FIXME: magic #s
+            this.Camera = new PlayerCamera(this.Element, ScreenWidth, ScreenHeight);
 
-            this.Ground = GenerateGround();
-        }
-
-        // test generator method
-        private Ground GenerateGround()
-        {
-            var tileDefinitions = new TileDefinition[5] {
-                new TileDefinition(0, 2),
-                new TileDefinition(0, 1),
-                new TileDefinition(0, 2),
-                new TileDefinition(0, 3),
-                new TileDefinition(0, 4),
-            };
-
-            var tileSet = new TileSet(TempGroundTexture, tileDefinitions, 32);
-
-            var mapSize = 32;
-
-            var map = new Tile[mapSize, mapSize];
-
-            for (int y = 0; y < mapSize; ++y)
-            {
-                for (int x = 0; x < mapSize; ++x)
-                {
-                    map[x, y] = new Tile(0, x * 16 + 32);
-                }
-            }
-
-            return new Ground(tileSet, SpriteBatch, map, this.Camera);
+            var generator = new GroundGenerator(SpriteBatch);
+            this.Ground = generator.Generate(groundTexture: TempGroundTexture, tileSize: 32, camera: this.Camera);
         }
 
         /// <summary>
