@@ -31,7 +31,6 @@ namespace SylvanSneaker
         DevConsole DefaultConsole;
 
         // Throw-away variables:
-        Texture2D TempTexture;
         Texture2D TempGroundTexture;
 
         // AnimatedElement Element;
@@ -67,14 +66,11 @@ namespace SylvanSneaker
             this.AudioManager = new AudioManager();
             this.TextureManager = new TextureManager(this.Content);
             this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager);
-
-
             // this.AudioManager.PlaySong(CurrentSong);
 
             this.Controller = new PlayerController();
 
             this.SetupWorld();
-
 
             this.DefaultConsole = new DevConsole(SpriteBatch, DevFont);
         }
@@ -104,9 +100,7 @@ namespace SylvanSneaker
 
             CurrentSong = Content.Load<Song>("Songs/trim_loop2");
 
-            TempTexture = Content.Load<Texture2D>("Textures/knight_sword_REPLACE");
             TempGroundTexture = Content.Load<Texture2D>("Textures/tile_jungle_REPLACE");
-
         }
 
         /// <summary>
@@ -130,11 +124,39 @@ namespace SylvanSneaker
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // this.Ground.ShiftCamera(Direction.East);
+            this.UpdateControls(gameTime);
+
+            this.EntityManager.Update(timeElapsed);
 
             this.Ground.Update(timeElapsed);
+            this.ElementManager.Update(timeElapsed);
 
             base.Update(gameTime);
+        }
+
+        private void UpdateControls(GameTime gameTime)
+        {
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                this.Controller.SendCommand(EntityCommand.MoveSouth);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                this.Controller.SendCommand(EntityCommand.MoveEast);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                this.Controller.SendCommand(EntityCommand.MoveWest);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                this.Controller.SendCommand(EntityCommand.MoveNorth);
+            }
+
         }
 
         /// <summary>

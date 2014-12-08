@@ -19,7 +19,9 @@ namespace SylvanSneaker
 
         public Entity Add(EntityType type, float mapX, float mapY, Controller controller)
         {
-            Entity entity = new BasicEntity(type, mapX, mapY, this.ElementManager, controller);
+            Entity entity = new BasicEntity(type, mapX, mapY, this.ElementManager);
+            controller.ControlledEntity = entity;
+
             Entities.Add(entity);
             return entity;
         }

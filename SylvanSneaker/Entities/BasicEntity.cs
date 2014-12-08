@@ -17,19 +17,17 @@ namespace SylvanSneaker
         private EntityType Type;
         public float MapX { get; private set; }
         public float MapY { get; private set; }
-        private Controller Controller;
         public Camera Camera { private get; set; }
 
         private ElementManager ElementManager { get; set; }
         private AnimatedElement Element { get; set; }
         // we need access to the content manager
 
-        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager, Controller controller)
+        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager)
         {
             this.Type = type;
             this.MapX = mapX;
             this.MapY = mapY;
-            this.Controller = controller;
             this.ElementManager = elementManager;
 
             var texture = TextureName.KNIGHT;
@@ -45,6 +43,25 @@ namespace SylvanSneaker
 
         public void SendCommand(EntityCommand command)
         {
+            if (command == EntityCommand.MoveSouth)
+            {
+                this.MapY += (float)0.1;
+            }
+
+            if (command == EntityCommand.MoveEast)
+            {
+                this.MapX += (float)0.1;
+            }
+
+            if (command == EntityCommand.MoveNorth)
+            {
+                this.MapY -= (float)0.1;
+            }
+
+            if (command == EntityCommand.MoveWest)
+            {
+                this.MapX -= (float)0.1;
+            }
             if (command.HasFlag(EntityCommand.MoveNorth) && command.HasFlag(EntityCommand.MoveEast))
             {
 

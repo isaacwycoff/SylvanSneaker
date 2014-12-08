@@ -15,6 +15,8 @@ namespace SylvanSneaker.Sandbox
 
     public class AnimatedElement : WorldElement
     {
+        private int TileSize = 32;
+
         private Texture2D Texture { get; set; }
 
         public Camera Camera
@@ -31,8 +33,21 @@ namespace SylvanSneaker.Sandbox
         private AnimationId CurrentAnimation;
         public int AnimationTime { get; private set; }              // time in milliseconds since start of animation
 
-        private int ScreenX { get; set; }
-        private int ScreenY { get; set; }
+        private int ScreenX
+        {
+            get
+            {
+                return (int)(MapX * TileSize);
+            }
+        }
+
+        private int ScreenY
+        {
+            get
+            {
+                return (int)(MapY * TileSize);
+            }
+        }
 
         private SpriteBatch SpriteBatch { get; set; }
 
@@ -66,8 +81,6 @@ namespace SylvanSneaker.Sandbox
             this.CurrentAnimation = AnimationId.Testing;
             this.AnimationTime = 0;
 
-            this.ScreenX = 0;
-            this.ScreenY = 0;
         }
 
         public void Draw(TimeSpan timeDelta)

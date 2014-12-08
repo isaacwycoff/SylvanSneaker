@@ -7,19 +7,9 @@ namespace SylvanSneaker
 {
     class PlayerController: Controller
     {
-        private Entity ControlledEntity { get; set; }
+        public Entity ControlledEntity { get; set; }
 
-        public PlayerController()
-        {
-
-        }
-
-        /*
-        public PlayerController(Entity entity)
-        {
-            this.ControlledEntity = entity;           
-        }
-        */
+        public PlayerController() { }
 
         public void SendCommand(EntityCommand command)
         {

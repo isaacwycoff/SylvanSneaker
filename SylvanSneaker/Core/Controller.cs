@@ -7,6 +7,6 @@ namespace SylvanSneaker
 {
     public interface Controller
     {
-        // Entity ControlledEntity { get; set; }
+        Entity ControlledEntity { get; set; }
     }
 }
