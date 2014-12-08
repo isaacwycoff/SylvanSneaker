@@ -46,21 +46,25 @@ namespace SylvanSneaker
             if (command == EntityCommand.MoveSouth)
             {
                 this.MapY += (float)0.1;
+                this.Element.CurrentAnimation = AnimationId.WalkSouth;
             }
 
             if (command == EntityCommand.MoveEast)
             {
                 this.MapX += (float)0.1;
+                this.Element.CurrentAnimation = AnimationId.WalkEast;
             }
 
             if (command == EntityCommand.MoveNorth)
             {
                 this.MapY -= (float)0.1;
+                this.Element.CurrentAnimation = AnimationId.WalkNorth;
             }
 
             if (command == EntityCommand.MoveWest)
             {
                 this.MapX -= (float)0.1;
+                this.Element.CurrentAnimation = AnimationId.WalkWest;
             }
             if (command.HasFlag(EntityCommand.MoveNorth) && command.HasFlag(EntityCommand.MoveEast))
             {
