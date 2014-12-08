@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SylvanSneaker.Environment;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,10 +50,24 @@ namespace SylvanSneaker.Sandbox
             }
         }
 
+        public Color Tint {
+            get
+            {
+                var lighting = this.Lighting.GetLightLevel((int)MapX, (int)MapY);
+                return new Color(lighting.Red, lighting.Green, lighting.Blue);
+            }
+        }
+
+        private WorldLighting Lighting { get; set; }
+
         private SpriteBatch SpriteBatch { get; set; }
 
-        public AnimatedElement(Texture2D texture, SpriteBatch spriteBatch)
+        public AnimatedElement(Texture2D texture, SpriteBatch spriteBatch, WorldLighting lighting)
         {
+            if (lighting == null)
+            {
+                throw new Exception("Missing WorldLighting!");
+            }
             if (texture == null)
             {
                 throw new Exception("Missing a texture!");
@@ -64,6 +79,7 @@ namespace SylvanSneaker.Sandbox
 
             this.Texture = texture;
             this.SpriteBatch = spriteBatch;
+            this.Lighting = lighting;
 
             // walk south animation:
             var walkSouth = new Animation(
@@ -101,9 +117,9 @@ namespace SylvanSneaker.Sandbox
             Rectangle sourceRect = new Rectangle(frame.Left, frame.Top, frame.Width, frame.Height);
             Rectangle destRect = new Rectangle(ScreenX, ScreenY, sourceRect.Width, sourceRect.Height);
 
-            Color tint = new Color(255, 255, 255, 255);
+            // Color tint = new Color(255, 255, 255, 255);
 
-            this.SpriteBatch.Draw(this.Texture, destRect, sourceRect, tint);  
+            this.SpriteBatch.Draw(this.Texture, destRect, sourceRect, Tint);  
         }
 
         private class AnimationFrame
@@ -176,15 +192,10 @@ namespace SylvanSneaker.Sandbox
                 }
                 return index - 1;
             }
-
         }
-
-
-
 
         public void Update(TimeSpan timeDelta)
         {
-
 //            throw new NotImplementedException();
         }
     }

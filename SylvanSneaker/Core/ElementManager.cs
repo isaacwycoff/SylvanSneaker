@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using SylvanSneaker.Environment;
 using SylvanSneaker.Sandbox;
 using System;
 using System.Collections.Generic;
@@ -11,19 +12,21 @@ namespace SylvanSneaker.Core
     {
         private IList<Element> Elements;
         private TextureManager TextureManager;
+        private Ground Ground;
         private SpriteBatch Batch;
 
-        public ElementManager(SpriteBatch spriteBatch, TextureManager textureManager)
+        public ElementManager(SpriteBatch spriteBatch, TextureManager textureManager, Ground ground)
         {
             this.Batch = spriteBatch;
             this.TextureManager = textureManager;
+            this.Ground = ground;
             Elements = new List<Element>();
         }
 
         public AnimatedElement Add(float mapX, float mapY, int textureId)
         {
             var texture = TextureManager[textureId];
-            var element = new AnimatedElement(texture, Batch);
+            var element = new AnimatedElement(texture, Batch, Ground);
             Elements.Add(element);
             return element;
             // throw new NotImplementedException();

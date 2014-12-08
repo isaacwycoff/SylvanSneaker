@@ -18,7 +18,7 @@ namespace SylvanSneaker.Environment
         NorthWest,
     }
 
-    public interface Ground: WorldElement
+    public interface Ground: WorldElement, WorldLighting
     {
 
     }
@@ -144,9 +144,9 @@ namespace SylvanSneaker.Environment
                     var sourceRect = TileSet.GetRectangle(tile.DefinitionId);
                     var destRect = new Rectangle((x * TileSize) + ScreenX, (y * TileSize) + ScreenY, TileSize, TileSize);
 
-                    var brightness = Math.Min(tile.LightLevel, 255);
+                    // var brightness = Math.Min(tile.LightLevel, 255);
 
-                    var tint = new Color(brightness, brightness, brightness, 255);
+                    var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
                     
                     SpriteBatch.Draw(TileSet.Texture, destRect, sourceRect, tint);
                 }
@@ -157,17 +157,41 @@ namespace SylvanSneaker.Environment
         {
             // throw new NotImplementedException();
         }
+
+        public LightLevel GetLightLevel(int x, int y)
+        {
+            if (x < 0) x = 0;
+            if (x > Map.GetLength(0) - 1) x = Map.GetLength(0) - 1;
+            if (y < 0) y = 0;
+            if (y > Map.GetLength(1) - 1) y = Map.GetLength(1) - 1;
+
+            return Map[x, y].Lighting;
+        }
+    }
+
+    public class LightLevel
+    {
+        public byte Red { get; private set; }
+        public byte Green { get; private set; }
+        public byte Blue { get; private set; }
+
+        public LightLevel(byte red, byte green, byte blue)
+        {
+            Red = red;
+            Green = green;
+            Blue = blue;
+        }
     }
 
     public class Tile
     {
         public int DefinitionId { get; private set; }
-        public int LightLevel { get; private set; }             // might want to sub-divide? idunno.
+        public LightLevel Lighting { get; private set; }
 
-        public Tile(int definitionId, int lightLevel)
+        public Tile(int definitionId, LightLevel lighting)
         {
             this.DefinitionId = definitionId;
-            this.LightLevel = lightLevel;
+            this.Lighting = lighting;
         }
     }
 

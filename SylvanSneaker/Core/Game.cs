@@ -65,7 +65,6 @@ namespace SylvanSneaker
 
             this.AudioManager = new AudioManager();
             this.TextureManager = new TextureManager(this.Content);
-            this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager);
             // this.AudioManager.PlaySong(CurrentSong);
 
             this.Controller = new PlayerController();
@@ -77,14 +76,17 @@ namespace SylvanSneaker
 
         private void SetupWorld()
         {
+            var generator = new GroundGenerator(SpriteBatch);
+            this.Ground = generator.Generate(groundTexture: TempGroundTexture, tileSize: 32, camera: this.Camera);
+
+            this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager, this.Ground);
+
             this.EntityManager = new EntityManager(this.TextureManager, this.ElementManager);
 
             this.Player = EntityManager.Add(EntityType.Knight, 1, 1, this.Controller);
 
             this.Camera = new PlayerCamera(this.Player, ScreenWidth, ScreenHeight);
 
-            var generator = new GroundGenerator(SpriteBatch);
-            this.Ground = generator.Generate(groundTexture: TempGroundTexture, tileSize: 32, camera: this.Camera);
         }
 
         /// <summary>
@@ -136,7 +138,6 @@ namespace SylvanSneaker
 
         private void UpdateControls(GameTime gameTime)
         {
-
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
                 this.Controller.SendCommand(EntityCommand.MoveSouth);

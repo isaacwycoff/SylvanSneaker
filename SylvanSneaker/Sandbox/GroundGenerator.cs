@@ -37,7 +37,9 @@ namespace SylvanSneaker.Environment
             {
                 for (int x = 0; x < mapSize; ++x)
                 {
-                    map[x, y] = new Tile(0, x * 16 + 32);
+                    var lighting = (byte)Math.Min(x * 16 + 32, 255);
+
+                    map[x, y] = new Tile(0, new LightLevel(lighting, lighting, lighting));
                 }
             }
 
