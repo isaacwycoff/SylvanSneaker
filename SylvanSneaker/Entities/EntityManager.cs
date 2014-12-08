@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylvanSneaker.Core;
+using System;
 using System.Collections.Generic;
 
 namespace SylvanSneaker
@@ -6,17 +7,21 @@ namespace SylvanSneaker
     class EntityManager
     {
         List<Entity> Entities;
+        TextureManager TextureManager;
+        ElementManager ElementManager;
 
-        public EntityManager()
+        public EntityManager(TextureManager textureManager, ElementManager elementManager)
         {
             Entities = new List<Entity>();
+            this.TextureManager = textureManager;
+            this.ElementManager = elementManager;
         }
 
-        public Entity NewEntity(EntityType type, float mapX, float mapY, Controller controller)
+        public Entity Add(EntityType type, float mapX, float mapY, Controller controller)
         {
-            Entity entity = new BasicEntity(type, mapX, mapY, controller);
+            Entity entity = new BasicEntity(type, mapX, mapY, this.ElementManager, controller);
             Entities.Add(entity);
-            return entity;            
+            return entity;
         }
 
         public void Update(TimeSpan timeDelta)
@@ -26,16 +31,5 @@ namespace SylvanSneaker
             }
         }
 
-        // only ELEMENTS should be drawn
-
-        /*
-        public void Draw(TimeSpan timeDelta)
-        {
-            foreach (Entity entity in this.Entities) {
-                entity.Draw(timeDelta);
-            }
-            
-        }
-        */
     }
 }

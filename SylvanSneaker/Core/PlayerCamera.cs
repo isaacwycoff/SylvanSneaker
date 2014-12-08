@@ -7,7 +7,7 @@ namespace SylvanSneaker.Core
 {
     class PlayerCamera: Camera
     {
-        public WorldElement AttachedTo { get; set; }
+        public Entity AttachedTo { get; set; }
 
         public float Scale
         {
@@ -37,7 +37,7 @@ namespace SylvanSneaker.Core
 
         public int Height { get; private set; }
 
-        public PlayerCamera(WorldElement attachedTo, int width, int height)
+        public PlayerCamera(Entity attachedTo, int width, int height)
         {
             this.AttachedTo = attachedTo;
             this.Width = width;

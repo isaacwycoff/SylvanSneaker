@@ -2,33 +2,39 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using SylvanSneaker.Audio;
 using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
 using SylvanSneaker.Sandbox;
+using SylvanSneaker.UI;
 using System;
 
 namespace SylvanSneaker
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager Graphics;
         SpriteBatch SpriteBatch;
 
-        ElementManager ElementManager;
         TextureManager TextureManager;
+        ElementManager ElementManager;
+        EntityManager EntityManager;
+        AudioManager AudioManager;
 
         Song CurrentSong;
 
         SpriteFont DevFont;
 
+        Entity Player;
+        PlayerController Controller;
+
+        DevConsole DefaultConsole;
+
         // Throw-away variables:
         Texture2D TempTexture;
         Texture2D TempGroundTexture;
 
-        AnimatedElement Element;
+        // AnimatedElement Element;
         Ground Ground;
 
         Camera Camera;
@@ -36,8 +42,6 @@ namespace SylvanSneaker
         int ScreenWidth = 800;
         int ScreenHeight = 600;
         Boolean IsFullScreen = false;
-
-        TimeSpan LastUpdate;
 
         public Game(): base()
         {
@@ -48,8 +52,6 @@ namespace SylvanSneaker
             this.Graphics.IsFullScreen = IsFullScreen;
 
             Content.RootDirectory = "Content";
-
-            LastUpdate = new TimeSpan(0);
         }
 
         /// <summary>
@@ -60,15 +62,30 @@ namespace SylvanSneaker
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             base.Initialize();
 
+            this.AudioManager = new AudioManager();
             this.TextureManager = new TextureManager(this.Content);
             this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager);
 
-            this.Element = new AnimatedElement(TempTexture, SpriteBatch);
 
-            this.Camera = new PlayerCamera(this.Element, ScreenWidth, ScreenHeight);
+            // this.AudioManager.PlaySong(CurrentSong);
+
+            this.Controller = new PlayerController();
+
+            this.SetupWorld();
+
+
+            this.DefaultConsole = new DevConsole(SpriteBatch, DevFont);
+        }
+
+        private void SetupWorld()
+        {
+            this.EntityManager = new EntityManager(this.TextureManager, this.ElementManager);
+
+            this.Player = EntityManager.Add(EntityType.Knight, 1, 1, this.Controller);
+
+            this.Camera = new PlayerCamera(this.Player, ScreenWidth, ScreenHeight);
 
             var generator = new GroundGenerator(SpriteBatch);
             this.Ground = generator.Generate(groundTexture: TempGroundTexture, tileSize: 32, camera: this.Camera);
@@ -90,11 +107,6 @@ namespace SylvanSneaker
             TempTexture = Content.Load<Texture2D>("Textures/knight_sword_REPLACE");
             TempGroundTexture = Content.Load<Texture2D>("Textures/tile_jungle_REPLACE");
 
-            // TODO: put things that are game init stuff in their own function
-            // that happens after LoadContent
-            MediaPlayer.IsRepeating = true;
-            // MediaPlayer.Play(currentSong);
-            MediaPlayer.Volume = 0.5f;          // FIXME: get this from Settings
         }
 
         /// <summary>
@@ -118,13 +130,9 @@ namespace SylvanSneaker
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
             // this.Ground.ShiftCamera(Direction.East);
 
             this.Ground.Update(timeElapsed);
-
-            this.Element.Update(timeElapsed);
 
             base.Update(gameTime);
         }
@@ -135,7 +143,7 @@ namespace SylvanSneaker
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            TimeSpan timeElapsed = gameTime.ElapsedGameTime;
+            var timeElapsed = gameTime.ElapsedGameTime;
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -146,18 +154,12 @@ namespace SylvanSneaker
                             DepthStencilState.Default,          //
                             RasterizerState.CullNone);
 
-            // debugging text -- FIXME: put this in its own function
-            string output = String.Format("Element MS: {0}", Element.AnimationTime);
-
             Ground.Draw(timeElapsed);
 
-            Element.Draw(timeElapsed);
+            ElementManager.Draw(timeElapsed);
 
-            // Find the center of the string
-            Vector2 FontOrigin = DevFont.MeasureString(output) / 2;
-            // Draw the string
-            SpriteBatch.DrawString(DevFont, output, new Vector2(21, 501), Color.DarkBlue);          // y 571
-            SpriteBatch.DrawString(DevFont, output, new Vector2(20, 500), Color.WhiteSmoke);        // y 570
+            DefaultConsole.WriteLine("TESTING");
+            DefaultConsole.Draw(timeElapsed);
 
             // end drawing:
             SpriteBatch.End();

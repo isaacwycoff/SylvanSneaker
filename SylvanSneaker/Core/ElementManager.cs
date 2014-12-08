@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using SylvanSneaker.Sandbox;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace SylvanSneaker.Core
 {
-    class ElementManager
+    public class ElementManager
     {
         private IList<Element> Elements;
         private TextureManager TextureManager;
@@ -19,18 +20,21 @@ namespace SylvanSneaker.Core
             Elements = new List<Element>();
         }
 
-        public Element NewElement(float mapX, float mapY, string textureName)
+        public AnimatedElement Add(float mapX, float mapY, int textureId)
         {
-            throw new NotImplementedException();
+            var texture = TextureManager[textureId];
+            var element = new AnimatedElement(texture, Batch);
+            Elements.Add(element);
+            return element;
+            // throw new NotImplementedException();
         }
 
         public void Draw(TimeSpan timeDelta)
         {
             foreach (var element in Elements)
             {
-                element.Update(timeDelta);
+                element.Draw(timeDelta);
             }
-            throw new NotImplementedException();
         }
 
         public void Update(TimeSpan timeDelta)

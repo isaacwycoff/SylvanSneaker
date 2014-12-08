@@ -22,15 +22,9 @@ namespace SylvanSneaker.Sandbox
             set { throw new NotImplementedException(); }
         }
 
-        public float MapX
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public float MapX { get; set; }
 
-        public float MapY
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public float MapY { get; set; }
 
         private Dictionary<AnimationId, Animation> AnimationLookup { get; set; }
 

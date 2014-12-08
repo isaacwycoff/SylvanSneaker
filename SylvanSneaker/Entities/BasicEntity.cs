@@ -1,4 +1,5 @@
-﻿using SylvanSneaker.Sandbox;
+﻿using SylvanSneaker.Core;
+using SylvanSneaker.Sandbox;
 using System;
 
 namespace SylvanSneaker
@@ -19,25 +20,27 @@ namespace SylvanSneaker
         private Controller Controller;
         public Camera Camera { private get; set; }
 
-        private WorldElement Element { get; set; }
+        private ElementManager ElementManager { get; set; }
+        private AnimatedElement Element { get; set; }
         // we need access to the content manager
 
-        public BasicEntity(EntityType type, float mapX, float mapY, Controller controller)
+        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager, Controller controller)
         {
             this.Type = type;
             this.MapX = mapX;
             this.MapY = mapY;
             this.Controller = controller;
-        }
+            this.ElementManager = elementManager;
 
-        public void Draw(TimeSpan timeDelta)
-        {
-            throw new NotImplementedException();
+            var texture = TextureName.KNIGHT;
+
+            this.Element = this.ElementManager.Add(MapX, MapY, texture);
         }
 
         public void Update(TimeSpan timeDelta)
         {
-            throw new NotImplementedException();
+            this.Element.MapX = this.MapX;
+            this.Element.MapY = this.MapY;
         }
 
         public void SendCommand(EntityCommand command)
