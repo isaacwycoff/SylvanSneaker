@@ -100,6 +100,11 @@ namespace SylvanSneaker.Sandbox
                     }
                 );
 
+            var idleSouth = new Animation(
+                new AnimationFrame[] {
+                    new AnimationFrame(30, 669, 64, 53, 1000),
+                    });
+
             var walkEast = new Animation(
                 new AnimationFrame[] {
                     new AnimationFrame(24, 148, 39, 53, 250),
@@ -109,6 +114,11 @@ namespace SylvanSneaker.Sandbox
                     new AnimationFrame(62, 148, 39, 53, 250),
                     }
                 );
+
+            var idleEast = new Animation(
+                new AnimationFrame[] {
+                    new AnimationFrame(24, 148, 39, 53, 250),
+                    });
 
             var walkNorth = new Animation(
                 new AnimationFrame[] {
@@ -120,6 +130,11 @@ namespace SylvanSneaker.Sandbox
                     }
                 );
 
+            var idleNorth = new Animation(
+                new AnimationFrame[] {
+                    new AnimationFrame(29, 400, 55, 63, 250),
+                    });
+
             var walkWest = new Animation(
                 new AnimationFrame[] {
                     new AnimationFrame(24, 148, 39, 53, 250, true),
@@ -130,6 +145,10 @@ namespace SylvanSneaker.Sandbox
                     }
                 );
 
+            var idleWest = new Animation(
+                new AnimationFrame[] {
+                    new AnimationFrame(24, 148, 39, 53, 250, true),
+                    });
 
             this.AnimationLookup = new Dictionary<AnimationId, Animation>();
             this.AnimationLookup[AnimationId.Testing] = walkSouth;
@@ -137,6 +156,12 @@ namespace SylvanSneaker.Sandbox
             this.AnimationLookup[AnimationId.WalkEast] = walkEast;
             this.AnimationLookup[AnimationId.WalkNorth] = walkNorth;
             this.AnimationLookup[AnimationId.WalkWest] = walkWest;
+
+            this.AnimationLookup[AnimationId.IdleSouth] = idleSouth;
+            this.AnimationLookup[AnimationId.IdleEast] = idleEast;
+            this.AnimationLookup[AnimationId.IdleNorth] = idleNorth;
+            this.AnimationLookup[AnimationId.IdleWest] = idleWest;
+
 
             this.CurrentAnimation = AnimationId.Testing;
             this.AnimationTime = 0;

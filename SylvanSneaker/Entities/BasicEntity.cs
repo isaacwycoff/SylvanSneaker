@@ -71,9 +71,22 @@ namespace SylvanSneaker
 
         private void Idle(TimeSpan timeDelta)
         {
-
-
-
+            if (CurrentDirection.HasFlag(Direction.South))
+            {
+                Element.CurrentAnimation = AnimationId.IdleSouth;
+            }
+            else if (CurrentDirection.HasFlag(Direction.North))
+            {
+                Element.CurrentAnimation = AnimationId.IdleNorth;
+            }
+            else if (CurrentDirection.HasFlag(Direction.East))
+            {
+                Element.CurrentAnimation = AnimationId.IdleEast;
+            }
+            else if (CurrentDirection.HasFlag(Direction.West))
+            {
+                Element.CurrentAnimation = AnimationId.IdleWest;
+            }
         }
 
         private void Walk(TimeSpan timeDelta)
