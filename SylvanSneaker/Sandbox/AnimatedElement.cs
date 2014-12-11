@@ -106,6 +106,7 @@ namespace SylvanSneaker.Sandbox
                     new AnimationFrame(62, 148, 39, 53, 250),
                     new AnimationFrame(105, 148, 39, 53, 250),
                     new AnimationFrame(152, 148, 39, 53, 250),
+                    new AnimationFrame(62, 148, 39, 53, 250),
                     }
                 );
 
@@ -115,6 +116,7 @@ namespace SylvanSneaker.Sandbox
                     new AnimationFrame(82, 400, 55, 63, 250),
                     new AnimationFrame(140, 400, 55, 63, 250),
                     new AnimationFrame(196, 400, 55, 63, 250),
+                    new AnimationFrame(82, 400, 55, 63, 250),
                     }
                 );
 
@@ -124,6 +126,7 @@ namespace SylvanSneaker.Sandbox
                     new AnimationFrame(62, 148, 39, 53, 250, true),
                     new AnimationFrame(105, 148, 39, 53, 250, true),
                     new AnimationFrame(152, 148, 39, 53, 250, true),
+                    new AnimationFrame(62, 148, 39, 53, 250, true),
                     }
                 );
 

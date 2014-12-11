@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Media;
 using SylvanSneaker.Audio;
 using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
+using SylvanSneaker.Input;
 using SylvanSneaker.Sandbox;
 using SylvanSneaker.UI;
 using System;
@@ -20,6 +21,7 @@ namespace SylvanSneaker
         ElementManager ElementManager;
         EntityManager EntityManager;
         AudioManager AudioManager;
+        InputManager InputManager;
 
         Song CurrentSong;
 
@@ -66,6 +68,8 @@ namespace SylvanSneaker
             this.AudioManager = new AudioManager();
             this.TextureManager = new TextureManager(this.Content);
             // this.AudioManager.PlaySong(CurrentSong);
+
+            this.InputManager = new InputManager();
 
             this.Controller = new PlayerController();
 
@@ -138,6 +142,13 @@ namespace SylvanSneaker
 
         private void UpdateControls(GameTime gameTime)
         {
+            var keys = Keyboard.GetState().GetPressedKeys();
+
+            // this.InputManager.Update(gameTime, this.Controller);
+
+            Controller.SendCommand(InputManager.UpdateGame(gameTime));
+
+            /*
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
                 this.Controller.SendCommand(EntityCommand.MoveSouth);
@@ -157,7 +168,7 @@ namespace SylvanSneaker
             {
                 this.Controller.SendCommand(EntityCommand.MoveNorth);
             }
-
+            */
         }
 
         /// <summary>

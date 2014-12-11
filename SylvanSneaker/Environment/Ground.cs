@@ -7,15 +7,12 @@ using System.Text;
 
 namespace SylvanSneaker.Environment
 {
+    [Flags]
     public enum Direction {
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest,
+        North = 1,
+        East = 2,
+        South = 4,
+        West = 8,
     }
 
     public interface Ground: WorldElement, WorldLighting

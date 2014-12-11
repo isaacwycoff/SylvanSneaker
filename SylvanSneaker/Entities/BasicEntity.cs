@@ -1,4 +1,5 @@
 ﻿using SylvanSneaker.Core;
+using SylvanSneaker.Environment;
 using SylvanSneaker.Sandbox;
 using System;
 
@@ -12,8 +13,23 @@ namespace SylvanSneaker
         HealingPotion
     }
 
+    [Flags]
+    public enum Action
+    {
+        Idle = 1,
+        Walk = 2,
+        Attack = 4,
+        Flinch = 8,
+        Die = 16,
+    }
+
+
+
     public class BasicEntity: Entity
     {
+        Direction CurrentDirection;
+        Action CurrentAction;
+
         private EntityType Type;
         public float MapX { get; private set; }
         public float MapY { get; private set; }
@@ -23,12 +39,15 @@ namespace SylvanSneaker
         private AnimatedElement Element { get; set; }
         // we need access to the content manager
 
-        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager)
+        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager, Direction direction = Direction.South)
         {
             this.Type = type;
             this.MapX = mapX;
             this.MapY = mapY;
             this.ElementManager = elementManager;
+
+            this.CurrentDirection = direction;
+            this.CurrentAction = Action.Idle;
 
             var texture = TextureName.KNIGHT;
 
@@ -37,44 +56,122 @@ namespace SylvanSneaker
 
         public void Update(TimeSpan timeDelta)
         {
+            if (this.CurrentAction == Action.Walk)
+            {
+                Walk(timeDelta);
+            }
+            else
+            {
+                Idle(timeDelta);
+            }
+
             this.Element.MapX = this.MapX;
             this.Element.MapY = this.MapY;
         }
 
+        private void Idle(TimeSpan timeDelta)
+        {
+
+
+
+        }
+
+        private void Walk(TimeSpan timeDelta)
+        {
+            const float ConstantWalkSpeed = (float)(10.0 / 1000.0);     // "WalkSpeed 10" should produce this
+            const float Cos45 = (float)0.707;
+
+            var WalkSpeed = (float)(ConstantWalkSpeed * timeDelta.TotalMilliseconds);
+
+            if (CurrentDirection.HasFlag(Direction.South))
+            {
+                Element.CurrentAnimation = AnimationId.WalkSouth;
+                if (CurrentDirection.HasFlag(Direction.East))
+                {
+                    this.MapY += (WalkSpeed * Cos45);
+                    this.MapX += (WalkSpeed * Cos45);
+                }
+                else if (CurrentDirection.HasFlag(Direction.West))
+                {
+                    this.MapY += (WalkSpeed * Cos45);
+                    this.MapX -= (WalkSpeed * Cos45);
+                }
+                else
+                {
+                    this.MapY += WalkSpeed;
+                }
+            }
+            else if (CurrentDirection.HasFlag(Direction.North))
+            {
+                Element.CurrentAnimation = AnimationId.WalkNorth;
+                if (CurrentDirection.HasFlag(Direction.East))
+                {
+                    this.MapY -= (WalkSpeed * Cos45);
+                    this.MapX += (WalkSpeed * Cos45);
+                }
+                else if (CurrentDirection.HasFlag(Direction.West))
+                {
+                    this.MapY -= (WalkSpeed * Cos45);
+                    this.MapX -= (WalkSpeed * Cos45);
+                }
+                else
+                {
+                    this.MapY -= WalkSpeed;
+                }
+            }
+            else if (CurrentDirection.HasFlag(Direction.East))
+            {
+                Element.CurrentAnimation = AnimationId.WalkEast;
+                this.MapX += WalkSpeed;
+            }
+            else if (CurrentDirection.HasFlag(Direction.West))
+            {
+                Element.CurrentAnimation = AnimationId.WalkWest;
+                this.MapX -= WalkSpeed;
+            }
+        }
+
         public void SendCommand(EntityCommand command)
         {
-            if (command == EntityCommand.MoveSouth)
+            var isWalking = false;
+            var isFiring = false;
+
+            Direction newDirection = 0;
+
+            if (command.HasFlag(EntityCommand.MoveSouth))
             {
-                this.MapY += (float)0.1;
-                this.Element.CurrentAnimation = AnimationId.WalkSouth;
+                isWalking = true;
+                newDirection = newDirection | Direction.South;
             }
 
-            if (command == EntityCommand.MoveEast)
+            if (command.HasFlag(EntityCommand.MoveEast))
             {
-                this.MapX += (float)0.1;
-                this.Element.CurrentAnimation = AnimationId.WalkEast;
+                isWalking = true;
+                newDirection = newDirection | Direction.East;
             }
 
-            if (command == EntityCommand.MoveNorth)
+            if (command.HasFlag(EntityCommand.MoveNorth))
             {
-                this.MapY -= (float)0.1;
-                this.Element.CurrentAnimation = AnimationId.WalkNorth;
+                isWalking = true;
+                newDirection = (newDirection | Direction.North) & ~Direction.South;
             }
 
-            if (command == EntityCommand.MoveWest)
+            if (command.HasFlag(EntityCommand.MoveWest))
             {
-                this.MapX -= (float)0.1;
-                this.Element.CurrentAnimation = AnimationId.WalkWest;
-            }
-            if (command.HasFlag(EntityCommand.MoveNorth) && command.HasFlag(EntityCommand.MoveEast))
-            {
-
+                isWalking = true;
+                newDirection = (newDirection | Direction.West) & ~Direction.East;
             }
 
-            if (command.HasFlag(EntityCommand.MoveNorth & EntityCommand.MoveEast))
+            if (isWalking)
             {
-
+                this.CurrentAction = Action.Walk;
             }
+            else
+            {
+                this.CurrentAction = Action.Idle;
+            }
+
+            if (newDirection != 0) { this.CurrentDirection = newDirection; }
         }
     }
 }
