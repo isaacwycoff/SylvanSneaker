@@ -26,6 +26,8 @@ namespace SylvanSneaker
             return entity;
         }
 
+
+
         public void Update(TimeSpan timeDelta)
         {
             foreach(Entity entity in this.Entities) {

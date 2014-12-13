@@ -11,6 +11,6 @@ namespace SylvanSneaker
         float MapX { get; }
         float MapY { get; }
 
-        Camera Camera { set; }
+        void Draw(TimeSpan timeDelta, Camera camera);
     }
 }

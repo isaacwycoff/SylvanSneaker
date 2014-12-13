@@ -10,7 +10,7 @@ namespace SylvanSneaker.Core
 {
     public class ElementManager
     {
-        private IList<Element> Elements;
+        private IList<WorldElement> WorldElements;
         private TextureManager TextureManager;
         private Ground Ground;
         private SpriteBatch Batch;
@@ -20,29 +20,29 @@ namespace SylvanSneaker.Core
             this.Batch = spriteBatch;
             this.TextureManager = textureManager;
             this.Ground = ground;
-            Elements = new List<Element>();
+            WorldElements = new List<WorldElement>();
         }
 
         public AnimatedElement Add(float mapX, float mapY, int textureId)
         {
             var texture = TextureManager[textureId];
             var element = new AnimatedElement(texture, Batch, Ground);
-            Elements.Add(element);
+            WorldElements.Add(element);
             return element;
             // throw new NotImplementedException();
         }
 
-        public void Draw(TimeSpan timeDelta)
+        public void Draw(TimeSpan timeDelta, Camera camera)
         {
-            foreach (var element in Elements)
+            foreach (var element in WorldElements)
             {
-                element.Draw(timeDelta);
+                element.Draw(timeDelta, camera);
             }
         }
 
         public void Update(TimeSpan timeDelta)
         {
-            foreach(var element in Elements)
+            foreach(var element in WorldElements)
             {
                 element.Update(timeDelta);
             }

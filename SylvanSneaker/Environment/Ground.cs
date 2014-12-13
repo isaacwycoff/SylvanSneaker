@@ -69,8 +69,8 @@ namespace SylvanSneaker.Environment
             // this.ScreenRows = (this.Camera.Height / this.TileSize) + 1;
             // this.ScreenColumns = (this.Camera.Width / this.TileSize) + 1;
             
-            this.ScreenRows = 10;
-            this.ScreenColumns = 14;
+            this.ScreenRows = 20;
+            this.ScreenColumns = 28;
             this.TileSize = 64;
             this.OffsetX = 0;
             this.OffsetY = 0;
@@ -123,14 +123,11 @@ namespace SylvanSneaker.Environment
 
         }
 
-        public void Draw(TimeSpan timeDelta)
+        public void Draw(TimeSpan timeDelta, Camera camera)
         {
 
             int maxX = Math.Min(ScreenColumns, Map.GetLength(0) - OffsetX);
             int maxY = Math.Min(ScreenColumns, Map.GetLength(1) - OffsetY);
-
-            // Camera.MapX
-            // Camera.MapY;
 
             for (int y = 0; y < maxY; ++y)
             {
@@ -139,13 +136,10 @@ namespace SylvanSneaker.Environment
                     var tile = Map[x + OffsetX, y + OffsetY];
 
                     var sourceRect = TileSet.GetRectangle(tile.DefinitionId);
-                    var destRect = new Rectangle((x * TileSize) + ScreenX, (y * TileSize) + ScreenY, TileSize, TileSize);
-
-                    // var brightness = Math.Min(tile.LightLevel, 255);
 
                     var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
-                    
-                    SpriteBatch.Draw(TileSet.Texture, destRect, sourceRect, tint);
+
+                    camera.DrawTile(TileSet.Texture, sourceRect, x + OffsetX, y + OffsetY, tint);
                 }
             }
         }

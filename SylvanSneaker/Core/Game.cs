@@ -89,8 +89,7 @@ namespace SylvanSneaker
 
             this.Player = EntityManager.Add(EntityType.Knight, 1, 1, this.Controller);
 
-            this.Camera = new PlayerCamera(this.Player, ScreenWidth, ScreenHeight);
-
+            this.Camera = new PlayerCamera(this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
         }
 
         /// <summary>
@@ -188,9 +187,9 @@ namespace SylvanSneaker
                             DepthStencilState.Default,          //
                             RasterizerState.CullNone);
 
-            Ground.Draw(timeElapsed);
+            Ground.Draw(timeElapsed, this.Camera);
 
-            ElementManager.Draw(timeElapsed);
+            ElementManager.Draw(timeElapsed, this.Camera);
 
             DefaultConsole.WriteLine("TESTING");
             DefaultConsole.Draw(timeElapsed);

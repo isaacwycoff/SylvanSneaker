@@ -35,6 +35,8 @@ namespace SylvanSneaker
         public float MapY { get; private set; }
         public Camera Camera { private get; set; }
 
+        private int WalkSpeed { get; set; }
+
         private ElementManager ElementManager { get; set; }
         private AnimatedElement Element { get; set; }
         // we need access to the content manager
@@ -48,6 +50,7 @@ namespace SylvanSneaker
 
             this.CurrentDirection = direction;
             this.CurrentAction = Action.Idle;
+            this.WalkSpeed = 10;
 
             var texture = TextureName.KNIGHT;
 
@@ -91,27 +94,27 @@ namespace SylvanSneaker
 
         private void Walk(TimeSpan timeDelta)
         {
-            const float ConstantWalkSpeed = (float)(10.0 / 1000.0);     // "WalkSpeed 10" should produce this
+            // this whole thing makes me feel gross:
             const float Cos45 = (float)0.707;
 
-            var WalkSpeed = (float)(ConstantWalkSpeed * timeDelta.TotalMilliseconds);
+            var walkDistance = (float)(WalkSpeed * timeDelta.TotalSeconds);
 
             if (CurrentDirection.HasFlag(Direction.South))
             {
                 Element.CurrentAnimation = AnimationId.WalkSouth;
                 if (CurrentDirection.HasFlag(Direction.East))
                 {
-                    this.MapY += (WalkSpeed * Cos45);
-                    this.MapX += (WalkSpeed * Cos45);
+                    this.MapY += (walkDistance * Cos45);
+                    this.MapX += (walkDistance * Cos45);
                 }
                 else if (CurrentDirection.HasFlag(Direction.West))
                 {
-                    this.MapY += (WalkSpeed * Cos45);
-                    this.MapX -= (WalkSpeed * Cos45);
+                    this.MapY += (walkDistance * Cos45);
+                    this.MapX -= (walkDistance * Cos45);
                 }
                 else
                 {
-                    this.MapY += WalkSpeed;
+                    this.MapY += walkDistance;
                 }
             }
             else if (CurrentDirection.HasFlag(Direction.North))
@@ -119,28 +122,28 @@ namespace SylvanSneaker
                 Element.CurrentAnimation = AnimationId.WalkNorth;
                 if (CurrentDirection.HasFlag(Direction.East))
                 {
-                    this.MapY -= (WalkSpeed * Cos45);
-                    this.MapX += (WalkSpeed * Cos45);
+                    this.MapY -= (walkDistance * Cos45);
+                    this.MapX += (walkDistance * Cos45);
                 }
                 else if (CurrentDirection.HasFlag(Direction.West))
                 {
-                    this.MapY -= (WalkSpeed * Cos45);
-                    this.MapX -= (WalkSpeed * Cos45);
+                    this.MapY -= (walkDistance * Cos45);
+                    this.MapX -= (walkDistance * Cos45);
                 }
                 else
                 {
-                    this.MapY -= WalkSpeed;
+                    this.MapY -= walkDistance;
                 }
             }
             else if (CurrentDirection.HasFlag(Direction.East))
             {
                 Element.CurrentAnimation = AnimationId.WalkEast;
-                this.MapX += WalkSpeed;
+                this.MapX += walkDistance;
             }
             else if (CurrentDirection.HasFlag(Direction.West))
             {
                 Element.CurrentAnimation = AnimationId.WalkWest;
-                this.MapX -= WalkSpeed;
+                this.MapX -= walkDistance;
             }
         }
 

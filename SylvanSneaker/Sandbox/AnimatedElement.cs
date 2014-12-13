@@ -30,7 +30,8 @@ namespace SylvanSneaker.Sandbox
 
         public Camera Camera
         {
-            set { throw new NotImplementedException(); }
+            private get;
+            set;
         }
 
         public float MapX { get; set; }
@@ -42,22 +43,6 @@ namespace SylvanSneaker.Sandbox
         public AnimationId CurrentAnimation { get; set; }
 
         public int AnimationTime { get; private set; }              // time in milliseconds since start of animation
-
-        private int ScreenX
-        {
-            get
-            {
-                return (int)(MapX * TileSize);
-            }
-        }
-
-        private int ScreenY
-        {
-            get
-            {
-                return (int)(MapY * TileSize);
-            }
-        }
 
         public Color Tint {
             get
@@ -93,61 +78,61 @@ namespace SylvanSneaker.Sandbox
             // walk south animation:
             var walkSouth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(30, 669, 64, 53, 250),
-                    new AnimationFrame(95, 669, 63, 53, 250),
-                    new AnimationFrame(161, 670, 63, 53, 250),
-                    new AnimationFrame(95, 669, 63, 53, 250),
+                    new AnimationFrame(30, 669, 64, 53, 32, 53, 250),
+                    new AnimationFrame(95, 669, 63, 53, 32, 53, 250),
+                    new AnimationFrame(161, 669, 63, 53, 32, 53, 250),
+                    new AnimationFrame(95, 669, 63, 53, 32, 53, 250),
                     }
                 );
 
             var idleSouth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(30, 669, 64, 53, 1000),
+                    new AnimationFrame(30, 669, 64, 53, 32, 53, 1000),
                     });
 
             var walkEast = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 250),
-                    new AnimationFrame(62, 148, 39, 53, 250),
-                    new AnimationFrame(105, 148, 39, 53, 250),
-                    new AnimationFrame(152, 148, 39, 53, 250),
-                    new AnimationFrame(62, 148, 39, 53, 250),
+                    new AnimationFrame(24, 148, 39, 53, 20, 53, 250),
+                    new AnimationFrame(62, 148, 39, 53, 20, 53, 250),
+                    new AnimationFrame(105, 148, 39, 53, 20, 53, 250),
+                    new AnimationFrame(152, 148, 39, 53, 20, 53, 250),
+                    new AnimationFrame(62, 148, 39, 53, 20, 53, 250),
                     }
                 );
 
             var idleEast = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 250),
+                    new AnimationFrame(24, 148, 39, 53, 20, 53, 250),
                     });
 
             var walkNorth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(29, 400, 55, 63, 250),
-                    new AnimationFrame(82, 400, 55, 63, 250),
-                    new AnimationFrame(140, 400, 55, 63, 250),
-                    new AnimationFrame(196, 400, 55, 63, 250),
-                    new AnimationFrame(82, 400, 55, 63, 250),
+                    new AnimationFrame(29, 400, 55, 63, 27, 63, 250),
+                    new AnimationFrame(82, 400, 55, 63, 27, 63, 250),
+                    new AnimationFrame(140, 400, 55, 63, 27, 63, 250),
+                    new AnimationFrame(196, 400, 55, 63, 27, 63, 250),
+                    new AnimationFrame(82, 400, 55, 63, 27, 63, 250),
                     }
                 );
 
             var idleNorth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(29, 400, 55, 63, 250),
+                    new AnimationFrame(29, 400, 55, 63, 27, 63, 250),
                     });
 
             var walkWest = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 250, true),
-                    new AnimationFrame(62, 148, 39, 53, 250, true),
-                    new AnimationFrame(105, 148, 39, 53, 250, true),
-                    new AnimationFrame(152, 148, 39, 53, 250, true),
-                    new AnimationFrame(62, 148, 39, 53, 250, true),
+                    new AnimationFrame(24, 148, 39, 53, 20, 53, 250, true),
+                    new AnimationFrame(62, 148, 39, 53, 20, 53, 250, true),
+                    new AnimationFrame(105, 148, 39, 53, 20, 53, 250, true),
+                    new AnimationFrame(152, 148, 39, 53, 20, 53, 250, true),
+                    new AnimationFrame(62, 148, 39, 53, 20, 53, 250, true),
                     }
                 );
 
             var idleWest = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 250, true),
+                    new AnimationFrame(24, 148, 39, 53, 20, 53, 250, true),
                     });
 
             this.AnimationLookup = new Dictionary<AnimationId, Animation>();
@@ -162,13 +147,12 @@ namespace SylvanSneaker.Sandbox
             this.AnimationLookup[AnimationId.IdleNorth] = idleNorth;
             this.AnimationLookup[AnimationId.IdleWest] = idleWest;
 
-
             this.CurrentAnimation = AnimationId.Testing;
             this.AnimationTime = 0;
 
         }
 
-        public void Draw(TimeSpan timeDelta)
+        public void Draw(TimeSpan timeDelta, Camera camera)
         {
             AnimationTime += timeDelta.Milliseconds;
 
@@ -183,35 +167,21 @@ namespace SylvanSneaker.Sandbox
             var index = animation.GetFrameIndex(this.AnimationTime);
             var frame = animation[index];
 
-            Rectangle sourceRect = new Rectangle(frame.Left, frame.Top, frame.Width, frame.Height);
-            Rectangle destRect = new Rectangle(ScreenX, ScreenY, sourceRect.Width, sourceRect.Height);
+            // var destX = ScreenX - frame.AnchorX;    // -(this.Camera.MapX * this.Camera.Scale);
+            // var destY = ScreenY - frame.AnchorY;    // -(this.Camera.MapY * this.Camera.Scale);
+
+            // Rectangle sourceRect = new Rectangle(frame.Left, frame.Top, frame.Width, frame.Height);
+            // Rectangle destRect = new Rectangle(ScreenX - frame.AnchorX, ScreenY - frame.AnchorY, sourceRect.Width, sourceRect.Height);
 
             // Color tint = new Color(255, 255, 255, 255);
 
-            var effects = frame.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            // var effects = frame.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            this.SpriteBatch.Draw(this.Texture, drawRectangle: destRect, sourceRectangle: sourceRect, color: Tint, effect: effects);
+            camera.DrawFrame(this.Texture, frame, MapX, MapY, Tint);
+
+            // this.SpriteBatch.Draw(this.Texture, drawRectangle: destRect, sourceRectangle: sourceRect, color: Tint);
         }
 
-        private class AnimationFrame
-        {
-            public int Left { get; private set; }
-            public int Top { get; private set; }
-            public int Width { get; private set; }
-            public int Height { get; private set; }
-            public int Duration { get; private set; }
-            public bool Flipped { get; private set; }
-
-            public AnimationFrame(int left, int top, int width, int height, int duration, bool flipped = false)
-            {
-                this.Left = left;
-                this.Top = top;
-                this.Width = width;
-                this.Height = height;
-                this.Duration = duration;
-                this.Flipped = flipped;
-            }
-        }
 
         private class Animation
         {
@@ -272,4 +242,30 @@ namespace SylvanSneaker.Sandbox
 //            throw new NotImplementedException();
         }
     }
+
+    public class AnimationFrame
+    {
+        public int Left { get; private set; }
+        public int Top { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int Duration { get; private set; }
+        public bool Flipped { get; private set; }
+
+        public int AnchorX { get; private set; }
+        public int AnchorY { get; private set; }
+
+        public AnimationFrame(int left, int top, int width, int height, int anchorX, int anchorY, int duration, bool flipped = false)
+        {
+            this.Left = left;
+            this.Top = top;
+            this.Width = width;
+            this.Height = height;
+            this.AnchorX = anchorX;
+            this.AnchorY = anchorY;
+            this.Duration = duration;
+            this.Flipped = flipped;
+        }
+    }
+
 }
