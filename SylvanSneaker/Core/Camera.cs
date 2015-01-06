@@ -20,7 +20,6 @@ namespace SylvanSneaker
         int ScreenRows { get; }
         int ScreenColumns { get; }
 
-        void DrawFrame(Texture2D texture, AnimationFrame frame, float mapX, float mapY, Color tint);
-        void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint);
+        void Draw(GameTime gameTime);
     }
 }

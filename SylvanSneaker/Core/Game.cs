@@ -6,7 +6,6 @@ using SylvanSneaker.Audio;
 using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
 using SylvanSneaker.Input;
-using SylvanSneaker.Sandbox;
 using SylvanSneaker.UI;
 using System;
 
@@ -18,10 +17,10 @@ namespace SylvanSneaker
         SpriteBatch SpriteBatch;
 
         TextureManager TextureManager;
-        ElementManager ElementManager;
-        EntityManager EntityManager;
         AudioManager AudioManager;
         InputManager InputManager;
+
+        IWorld World;
 
         Song CurrentSong;
 
@@ -31,12 +30,6 @@ namespace SylvanSneaker
         PlayerController Controller;
 
         DevConsole DefaultConsole;
-
-        // Throw-away variables:
-        Texture2D TempGroundTexture;
-
-        // AnimatedElement Element;
-        Ground Ground;
 
         Camera Camera;
 
@@ -80,16 +73,11 @@ namespace SylvanSneaker
 
         private void SetupWorld()
         {
-            var generator = new GroundGenerator(SpriteBatch);
-            this.Ground = generator.Generate(groundTexture: TempGroundTexture, tileSize: 32, camera: this.Camera);
+            this.World = new World(this.TextureManager);
 
-            this.ElementManager = new ElementManager(this.SpriteBatch, this.TextureManager, this.Ground);
+            this.Player = World.AddEntity(type: EntityType.Knight, mapX: 1f, mapY: 1f, controller: this.Controller);
 
-            this.EntityManager = new EntityManager(this.TextureManager, this.ElementManager);
-
-            this.Player = EntityManager.Add(EntityType.Knight, 1, 1, this.Controller);
-
-            this.Camera = new PlayerCamera(this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
+            this.Camera = new PlayerCamera(this.World, this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
         }
 
         /// <summary>
@@ -104,8 +92,6 @@ namespace SylvanSneaker
             DevFont = Content.Load<SpriteFont>("Fonts/DevFont");
 
             CurrentSong = Content.Load<Song>("Songs/trim_loop2");
-
-            TempGroundTexture = Content.Load<Texture2D>("Textures/tile_jungle_REPLACE");
         }
 
         /// <summary>
@@ -129,12 +115,9 @@ namespace SylvanSneaker
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            this.UpdateControls(gameTime);
+            UpdateControls(gameTime);
 
-            this.EntityManager.Update(timeElapsed);
-
-            this.Ground.Update(timeElapsed);
-            this.ElementManager.Update(timeElapsed);
+            World.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -142,32 +125,7 @@ namespace SylvanSneaker
         private void UpdateControls(GameTime gameTime)
         {
             var keys = Keyboard.GetState().GetPressedKeys();
-
-            // this.InputManager.Update(gameTime, this.Controller);
-
             Controller.SendCommand(InputManager.UpdateGame(gameTime));
-
-            /*
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                this.Controller.SendCommand(EntityCommand.MoveSouth);
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                this.Controller.SendCommand(EntityCommand.MoveEast);
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                this.Controller.SendCommand(EntityCommand.MoveWest);
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                this.Controller.SendCommand(EntityCommand.MoveNorth);
-            }
-            */
         }
 
         /// <summary>
@@ -187,10 +145,9 @@ namespace SylvanSneaker
                             DepthStencilState.Default,          //
                             RasterizerState.CullNone);
 
-            Ground.Draw(timeElapsed, this.Camera);
+            Camera.Draw(gameTime);
 
-            ElementManager.Draw(timeElapsed, this.Camera);
-
+            DefaultConsole.SetDebugLine("SNEAK, DAMN YOU!");
             DefaultConsole.WriteLine("TESTING");
             DefaultConsole.Draw(timeElapsed);
 

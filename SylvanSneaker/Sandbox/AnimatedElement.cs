@@ -24,18 +24,9 @@ namespace SylvanSneaker.Sandbox
 
     public class AnimatedElement : WorldElement
     {
-        private int TileSize = 32;
-
-        private Texture2D Texture { get; set; }
-
-        public Camera Camera
-        {
-            private get;
-            set;
-        }
+        public Texture2D Texture { get; private set; }
 
         public float MapX { get; set; }
-
         public float MapY { get; set; }
 
         private Dictionary<AnimationId, Animation> AnimationLookup { get; set; }
@@ -44,36 +35,9 @@ namespace SylvanSneaker.Sandbox
 
         public int AnimationTime { get; private set; }              // time in milliseconds since start of animation
 
-        public Color Tint {
-            get
-            {
-                var lighting = this.Lighting.GetLightLevel((int)MapX, (int)MapY);
-                return new Color(lighting.Red, lighting.Green, lighting.Blue);
-            }
-        }
-
-        private WorldLighting Lighting { get; set; }
-
-        private SpriteBatch SpriteBatch { get; set; }
-
-        public AnimatedElement(Texture2D texture, SpriteBatch spriteBatch, WorldLighting lighting)
+        public AnimatedElement(Texture2D texture, float mapX, float mapY)
         {
-            if (lighting == null)
-            {
-                throw new Exception("Missing WorldLighting!");
-            }
-            if (texture == null)
-            {
-                throw new Exception("Missing a texture!");
-            }
-            if (spriteBatch == null)
-            {
-                throw new Exception("SpriteBatch wasn't initialized!");
-            }
-
             this.Texture = texture;
-            this.SpriteBatch = spriteBatch;
-            this.Lighting = lighting;
 
             // walk south animation:
             var walkSouth = new Animation(
@@ -149,39 +113,29 @@ namespace SylvanSneaker.Sandbox
 
             this.CurrentAnimation = AnimationId.Testing;
             this.AnimationTime = 0;
-
         }
 
-        public void Draw(TimeSpan timeDelta, Camera camera)
+        public void IncrementAnimationTime(int milliseconds)
         {
-            AnimationTime += timeDelta.Milliseconds;
+            AnimationTime += milliseconds;
 
             var animation = AnimationLookup[CurrentAnimation];
 
-            // loop around -- in REALITY we would probably send a signal to some other object to get the next animation
             if (AnimationTime > animation.Duration)
             {
                 AnimationTime = AnimationTime - animation.Duration;
             }
-
-            var index = animation.GetFrameIndex(this.AnimationTime);
-            var frame = animation[index];
-
-            // var destX = ScreenX - frame.AnchorX;    // -(this.Camera.MapX * this.Camera.Scale);
-            // var destY = ScreenY - frame.AnchorY;    // -(this.Camera.MapY * this.Camera.Scale);
-
-            // Rectangle sourceRect = new Rectangle(frame.Left, frame.Top, frame.Width, frame.Height);
-            // Rectangle destRect = new Rectangle(ScreenX - frame.AnchorX, ScreenY - frame.AnchorY, sourceRect.Width, sourceRect.Height);
-
-            // Color tint = new Color(255, 255, 255, 255);
-
-            // var effects = frame.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            camera.DrawFrame(this.Texture, frame, MapX, MapY, Tint);
-
-            // this.SpriteBatch.Draw(this.Texture, drawRectangle: destRect, sourceRectangle: sourceRect, color: Tint);
         }
 
+        public AnimationFrame CurrentFrame
+        {
+            get
+            {
+                var animation = AnimationLookup[CurrentAnimation];
+                var index = animation.GetFrameIndex(AnimationTime);
+                return animation[index];
+            }
+        }
 
         private class Animation
         {

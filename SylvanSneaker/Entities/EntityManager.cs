@@ -4,16 +4,14 @@ using System.Collections.Generic;
 
 namespace SylvanSneaker
 {
-    class EntityManager
+    public class EntityManager
     {
         List<Entity> Entities;
-        TextureManager TextureManager;
         ElementManager ElementManager;
 
-        public EntityManager(TextureManager textureManager, ElementManager elementManager)
+        public EntityManager(ElementManager elementManager)
         {
             Entities = new List<Entity>();
-            this.TextureManager = textureManager;
             this.ElementManager = elementManager;
         }
 
@@ -25,8 +23,6 @@ namespace SylvanSneaker
             Entities.Add(entity);
             return entity;
         }
-
-
 
         public void Update(TimeSpan timeDelta)
         {

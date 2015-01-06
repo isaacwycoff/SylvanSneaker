@@ -10,39 +10,26 @@ namespace SylvanSneaker.Core
 {
     public class ElementManager
     {
-        private IList<WorldElement> WorldElements;
+        public IList<AnimatedElement> AnimatedElements { get; private set; }
         private TextureManager TextureManager;
-        private Ground Ground;
-        private SpriteBatch Batch;
 
-        public ElementManager(SpriteBatch spriteBatch, TextureManager textureManager, Ground ground)
+        public ElementManager(TextureManager textureManager)
         {
-            this.Batch = spriteBatch;
             this.TextureManager = textureManager;
-            this.Ground = ground;
-            WorldElements = new List<WorldElement>();
+            AnimatedElements = new List<AnimatedElement>();
         }
 
         public AnimatedElement Add(float mapX, float mapY, int textureId)
         {
             var texture = TextureManager[textureId];
-            var element = new AnimatedElement(texture, Batch, Ground);
-            WorldElements.Add(element);
+            var element = new AnimatedElement(texture, mapX, mapY);
+            AnimatedElements.Add(element);
             return element;
-            // throw new NotImplementedException();
-        }
-
-        public void Draw(TimeSpan timeDelta, Camera camera)
-        {
-            foreach (var element in WorldElements)
-            {
-                element.Draw(timeDelta, camera);
-            }
         }
 
         public void Update(TimeSpan timeDelta)
         {
-            foreach(var element in WorldElements)
+            foreach(var element in AnimatedElements)
             {
                 element.Update(timeDelta);
             }

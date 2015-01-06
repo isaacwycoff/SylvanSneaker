@@ -45,6 +45,7 @@
     <Compile Include="Core\PlayerCamera.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Core\TextureManager.cs" />
+    <Compile Include="Core\World.cs" />
     <Compile Include="Core\WorldElement.cs" />
     <Compile Include="Entities\BasicEntity.cs" />
     <Compile Include="Core\Controller.cs" />

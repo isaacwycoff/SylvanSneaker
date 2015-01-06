@@ -10,6 +10,7 @@ namespace SylvanSneaker.Core
 {
     class PlayerCamera: Camera
     {
+        private IWorld World { get; set; }
         public Entity AttachedTo { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
 
@@ -43,8 +44,9 @@ namespace SylvanSneaker.Core
 
         public int Height { get; private set; }
 
-        public PlayerCamera(Entity attachedTo, SpriteBatch spriteBatch, int width, int height)
+        public PlayerCamera(IWorld world, Entity attachedTo, SpriteBatch spriteBatch, int width, int height)
         {
+            this.World = world;
             this.AttachedTo = attachedTo;
             this.SpriteBatch = spriteBatch;
             this.Width = width;
@@ -73,8 +75,6 @@ namespace SylvanSneaker.Core
 
         private void UpdateZoom()
         {
-
-
             this._TileSize = Convert.ToInt32(TILE_SIZE * this.Scale);
             this._ScreenRows = (this.Height / this.TileSize) + 1;
             this._ScreenColumns = (this.Width / this.TileSize) + 1;
@@ -89,12 +89,70 @@ namespace SylvanSneaker.Core
         private int GetScreenY(float mapY)
         {
             return (int)(mapY * TileSize);
-            // throw new NotImplementedException();
         }
 
+        public void Draw(GameTime gameTime)
+        {
+            var timeElapsed = gameTime.ElapsedGameTime;
+            DrawGround();
+            // World.ElementManager.Draw(timeElapsed, this);
+            DrawElements(timeElapsed);
+        }
+
+        private void DrawGround()
+        {
+            int OffsetX = 0;
+            int OffsetY = 0;
+            int ScreenX = 0;
+            int ScreenY = 0;
+
+            int maxX = Math.Min(World.Ground.ScreenColumns, World.Ground.MapWidth - OffsetX);
+            int maxY = Math.Min(World.Ground.ScreenRows, World.Ground.MapHeight - OffsetY);
+
+
+            for (int y = 0; y < maxY; ++y)
+            {
+                for (int x = 0; x < maxX; ++x)
+                {
+                    var tile = World.Ground.Map[x + OffsetX, y + OffsetY];
+
+                    var sourceRect = World.TileSet.GetRectangle(tile.DefinitionId);
+
+                    var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
+
+                    DrawTile(World.TileSet.Texture, sourceRect, x + OffsetX, y + OffsetY, tint);
+                }
+            }
+        }
+
+        public void DrawElements(TimeSpan timeDelta)
+        {
+            var elements = World.ElementManager.AnimatedElements;
+
+            foreach (var element in elements)
+            {
+                DrawAnimatedElement(timeDelta, element);
+            }
+        }
+
+        private void DrawAnimatedElement(TimeSpan timeDelta, AnimatedElement element)
+        {
+            element.IncrementAnimationTime(timeDelta.Milliseconds);
+            var frame = element.CurrentFrame;
+
+            var tint = GetTint((int)element.MapX, (int)element.MapY);
+            // var lighting = this.World.GetLightLevel((int)element.MapX, (int)element.MapY);
+            DrawFrame(element.Texture, frame, element.MapX, element.MapY, tint);
+        }
+
+        private Color GetTint(int mapX, int mapY)
+        {
+            var lighting = World.Ground.GetLightLevel(mapX, mapY);
+            return new Color(lighting.Red, lighting.Green, lighting.Blue);
+        }
 
         // we want everything from the frame EXCEPT the duration ...
-        public void DrawFrame(Texture2D texture, AnimationFrame frame, float mapX, float mapY, Color tint)
+        private void DrawFrame(Texture2D texture, AnimationFrame frame, float mapX, float mapY, Color tint)
         {
             var screenX = GetScreenX(mapX);
             var screenY = GetScreenY(mapY);
@@ -107,7 +165,7 @@ namespace SylvanSneaker.Core
             this.SpriteBatch.Draw(texture, drawRectangle: destRect, sourceRectangle: sourceRect, color: tint, effect: effect);
         }
 
-        public void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint)
+        private void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint)
         {
             var screenX = GetScreenX(mapX);
             var screenY = GetScreenY(mapY);

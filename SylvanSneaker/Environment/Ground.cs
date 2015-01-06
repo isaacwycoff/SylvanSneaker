@@ -17,19 +17,34 @@ namespace SylvanSneaker.Environment
 
     public interface Ground: WorldElement, WorldLighting
     {
-
+        int ScreenRows { get; }
+        int ScreenColumns { get; }
+        int MapWidth { get; }
+        int MapHeight { get; }
+        Tile[,] Map { get; }
     }
 
     internal class BasicGround: Ground
     {
-        private SpriteBatch SpriteBatch;
+        public Tile[,] Map { get; private set; }
 
-        private TileSet TileSet;
+        public int MapWidth
+        {
+            get {
+                return Map.GetLength(0);
+            }
+        }
 
-        private Tile[,] Map;
+        public int MapHeight
+        {
+            get
+            {
+                return Map.GetLength(1);
+            }
+        }
 
-        private int ScreenRows { get; set; }
-        private int ScreenColumns { get; set; }
+        public int ScreenRows { get; private set; }
+        public int ScreenColumns { get; private set; }
 
         private int TileSize { get; set; }
 
@@ -42,32 +57,25 @@ namespace SylvanSneaker.Environment
         public float MapX { get; private set; }         // may not be necessary, in which case we should not be a WorldElement
         public float MapY { get; private set; }         // or WorldElement shouldn't have these
 
-        public Camera Camera { private get; set; }
+        // public Camera Camera { private get; set; }
 
-        public BasicGround(TileSet tileSet, SpriteBatch spriteBatch, Tile[,] map, Camera camera)
+        public BasicGround(Tile[,] map)
         {
+            /*
             if (tileSet == null)
             {
                 throw new Exception("Missing a tileSet!");
-            }
+            } 
             if (spriteBatch == null)
             {
                 throw new Exception("Missing a SpriteBatch for Ground");
-            }
+            } */
             if (map == null)
             {
                 throw new Exception("Map was null!");
             }
 
-            this.TileSet = tileSet;
-            this.SpriteBatch = spriteBatch;
             this.Map = map;
-            this.Camera = camera;
-
-            // FIXME: should be programmatically determined and should be able to change AFTER the game has started:
-            // this.TileSize = 64 * this.Camera.Scale;
-            // this.ScreenRows = (this.Camera.Height / this.TileSize) + 1;
-            // this.ScreenColumns = (this.Camera.Width / this.TileSize) + 1;
             
             this.ScreenRows = 20;
             this.ScreenColumns = 28;
@@ -123,25 +131,10 @@ namespace SylvanSneaker.Environment
 
         }
 
+
         public void Draw(TimeSpan timeDelta, Camera camera)
         {
-
-            int maxX = Math.Min(ScreenColumns, Map.GetLength(0) - OffsetX);
-            int maxY = Math.Min(ScreenColumns, Map.GetLength(1) - OffsetY);
-
-            for (int y = 0; y < maxY; ++y)
-            {
-                for (int x = 0; x < maxX; ++x)
-                {
-                    var tile = Map[x + OffsetX, y + OffsetY];
-
-                    var sourceRect = TileSet.GetRectangle(tile.DefinitionId);
-
-                    var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
-
-                    camera.DrawTile(TileSet.Texture, sourceRect, x + OffsetX, y + OffsetY, tint);
-                }
-            }
+            throw new NotImplementedException();
         }
 
         public void Update(TimeSpan timeDelta)
@@ -186,7 +179,7 @@ namespace SylvanSneaker.Environment
         }
     }
 
-    class TileDefinition
+    public class TileDefinition
     {
         public int Row { get; private set; }
         public int Column { get; private set; }
@@ -199,7 +192,7 @@ namespace SylvanSneaker.Environment
         }
     }
 
-    internal class TileSet
+    public class TileSet
     {
         private TileDefinition [] Definitions { get; set; }
         private Rectangle[] SourceRectangles { get; set; }
