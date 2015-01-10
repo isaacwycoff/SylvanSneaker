@@ -23,8 +23,6 @@ namespace SylvanSneaker
         Die = 16,
     }
 
-
-
     public class BasicEntity: Entity
     {
         Direction CurrentDirection;

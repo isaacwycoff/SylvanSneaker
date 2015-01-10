@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
 namespace SylvanSneaker.Environment
 {
@@ -17,8 +12,6 @@ namespace SylvanSneaker.Environment
 
     public interface Ground: WorldElement, WorldLighting
     {
-        int ScreenRows { get; }
-        int ScreenColumns { get; }
         int MapWidth { get; }
         int MapHeight { get; }
         Tile[,] Map { get; }
@@ -43,103 +36,12 @@ namespace SylvanSneaker.Environment
             }
         }
 
-        public int ScreenRows { get; private set; }
-        public int ScreenColumns { get; private set; }
-
-        private int TileSize { get; set; }
-
-        private int OffsetX { get; set; }
-        private int OffsetY { get; set; }
-
-        private int ScreenX { get; set; }
-        private int ScreenY { get; set; }
-
-        public float MapX { get; private set; }         // may not be necessary, in which case we should not be a WorldElement
-        public float MapY { get; private set; }         // or WorldElement shouldn't have these
-
-        // public Camera Camera { private get; set; }
+        public float MapX { get { return 0f; } }
+        public float MapY { get { return 0f; } }
 
         public BasicGround(Tile[,] map)
         {
-            /*
-            if (tileSet == null)
-            {
-                throw new Exception("Missing a tileSet!");
-            } 
-            if (spriteBatch == null)
-            {
-                throw new Exception("Missing a SpriteBatch for Ground");
-            } */
-            if (map == null)
-            {
-                throw new Exception("Map was null!");
-            }
-
             this.Map = map;
-            
-            this.ScreenRows = 20;
-            this.ScreenColumns = 28;
-            this.TileSize = 64;
-            this.OffsetX = 0;
-            this.OffsetY = 0;
-            this.ScreenX = 0;
-            this.ScreenY = 0;
-        }
-
-        // FIXME: test method. Eventually I'll tie this to a Camera object
-        public void ShiftCamera(Direction direction)
-        {
-            var speed = 4;
-
-            switch (direction)
-            {
-                case Direction.North:
-                    this.ScreenY = this.ScreenY - speed;
-                    if (this.ScreenY < -TileSize)
-                    {
-                        this.ScreenY = this.ScreenY + TileSize;
-                        this.OffsetY = this.OffsetY - 1;
-                    }
-                    break;
-                case Direction.East:                                // this one seems to work properly
-                    this.ScreenX = this.ScreenX - speed;
-                    if (this.ScreenX < -TileSize)
-                    {
-                        this.ScreenX = this.ScreenX + TileSize;
-                        this.OffsetX = this.OffsetX + 1;
-                    }
-                    break;
-                case Direction.South:
-                    this.ScreenY = this.ScreenY + speed;
-                    if (this.ScreenY > TileSize)
-                    {
-                        this.ScreenY = this.ScreenY - TileSize;
-                        this.OffsetY = this.OffsetY + 1;
-                    }
-                    break;
-                case Direction.West:
-                    this.ScreenX = this.ScreenX - speed;
-                    if (this.ScreenX < -TileSize)
-                    {
-                        this.ScreenX = this.ScreenX + TileSize;
-                        this.OffsetX = this.OffsetX - 1;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-
-        public void Draw(TimeSpan timeDelta, Camera camera)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(TimeSpan timeDelta)
-        {
-            // throw new NotImplementedException();
         }
 
         public LightLevel GetLightLevel(int x, int y)
@@ -150,6 +52,11 @@ namespace SylvanSneaker.Environment
             if (y > Map.GetLength(1) - 1) y = Map.GetLength(1) - 1;
 
             return Map[x, y].Lighting;
+        }
+
+        public void Update(TimeSpan timeDelta)
+        {
+            // throw new NotImplementedException();
         }
     }
 
@@ -191,54 +98,4 @@ namespace SylvanSneaker.Environment
             this.Column = column;
         }
     }
-
-    public class TileSet
-    {
-        private TileDefinition [] Definitions { get; set; }
-        private Rectangle[] SourceRectangles { get; set; }
-        public Texture2D Texture { get; private set; }
-        public int TileSize { get; private set; }              // size in pixels of each individual tile
-
-        public TileSet (Texture2D texture, TileDefinition [] definitions, int tileSize)
-	    {
-            if (texture == null)
-            {
-                throw new Exception("Ground texture was null!");
-            }
-            if (definitions == null)
-            {
-                throw new Exception("There were no ground texture definitions!");
-            }
-
-            this.Texture = texture;
-            this.Definitions = definitions;
-            this.TileSize = tileSize;
-            this.SourceRectangles = GenerateSourceRectangles();
-	    }
-
-        public TileDefinition this[int i]
-        {
-            get {
-                return Definitions[i];
-            }
-        }
-
-        public Rectangle GetRectangle(int i)
-        {
-            return this.SourceRectangles[i];
-        }
-
-        private Rectangle[] GenerateSourceRectangles()
-        {
-            var rectangles = new Rectangle[Definitions.Length];
-
-            for (int i = 0; i < Definitions.Length; ++i)
-            {
-                var definition = Definitions[i];
-                rectangles[i] = new Rectangle(definition.Column * TileSize, definition.Row * TileSize, TileSize, TileSize);
-            }
-            return rectangles;
-        }
-    }
-
 }

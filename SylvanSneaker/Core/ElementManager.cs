@@ -1,10 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using SylvanSneaker.Environment;
-using SylvanSneaker.Sandbox;
+﻿using SylvanSneaker.Sandbox;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SylvanSneaker.Core
 {

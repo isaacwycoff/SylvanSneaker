@@ -1,11 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SylvanSneaker.Environment;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace SylvanSneaker.Sandbox
 {
@@ -207,10 +203,6 @@ namespace SylvanSneaker.Sandbox
 
     public class AnimationFrame
     {
-        // public int Left { get; private set; }
-        // public int Top { get; private set; }
-        // public int Width { get; private set; }
-        // public int Height { get; private set; }
         public Rectangle Rectangle { get; private set; }
         public int Duration { get; private set; }
         public bool Flipped { get; private set; }
@@ -220,10 +212,6 @@ namespace SylvanSneaker.Sandbox
 
         public AnimationFrame(int left, int top, int width, int height, int anchorX, int anchorY, int duration, bool flipped = false)
         {
-            // this.Left = left;
-            // this.Top = top;
-            // this.Width = width;
-            // this.Height = height;
             this.Rectangle = new Rectangle(left, top, width, height);
             this.AnchorX = anchorX;
             this.AnchorY = anchorY;

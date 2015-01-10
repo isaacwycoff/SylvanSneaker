@@ -138,12 +138,12 @@ namespace SylvanSneaker
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // begin drawing - XNA 4.0 code -
-            SpriteBatch.Begin(SpriteSortMode.Deferred,          // TODO: Research
-                            BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
-                            SamplerState.PointClamp,            // turn off magnification blurring
-                            DepthStencilState.Default,          //
-                            RasterizerState.CullNone);
+            // begin drawing - XNA 4.0 code 
+            SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
+                blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
+                samplerState: SamplerState.PointClamp,            // turn off magnification blurring
+                depthStencilState: DepthStencilState.Default,          //
+                rasterizerState: RasterizerState.CullNone);
 
             Camera.Draw(gameTime);
 
@@ -156,5 +156,6 @@ namespace SylvanSneaker
 
             base.Draw(gameTime);
         }
+
     }
 }

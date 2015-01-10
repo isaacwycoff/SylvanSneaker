@@ -2,9 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using SylvanSneaker.Sandbox;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SylvanSneaker.Core
 {
@@ -80,15 +77,18 @@ namespace SylvanSneaker.Core
 
         private void DrawGround()
         {
-            int OffsetX = 0;
-            int OffsetY = 0;
+            int OffsetX = (int)MapX;
+            int OffsetY = (int)MapY;
 
-            int maxX = Math.Min(World.Ground.ScreenColumns, World.Ground.MapWidth - OffsetX);
-            int maxY = Math.Min(World.Ground.ScreenRows, World.Ground.MapHeight - OffsetY);
+            int minX = Math.Max(0, -OffsetX);
+            int minY = Math.Max(0, -OffsetY);
 
-            for (int y = 0; y < maxY; ++y)
+            int maxX = Math.Min(this.ScreenColumns, World.Ground.MapWidth - OffsetX);
+            int maxY = Math.Min(this.ScreenRows, World.Ground.MapHeight - OffsetY);
+
+            for (int y = minY; y < maxY; ++y)
             {
-                for (int x = 0; x < maxX; ++x)
+                for (int x = minX; x < maxX; ++x)
                 {
                     var tile = World.Ground.Map[x + OffsetX, y + OffsetY];
 
@@ -103,8 +103,6 @@ namespace SylvanSneaker.Core
 
         public void DrawElements(TimeSpan timeDelta)
         {
-            // var elements = World.ElementManager.AnimatedElements;
-
             var elements = World.ElementManager.GetElementsInArea(left: MapX - 1, top: MapY - 1, width: this.ScreenColumns, height: this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)

@@ -17,7 +17,7 @@ namespace SylvanSneaker.Environment
 
         public Ground Generate()
         {
-            var mapSize = 32;
+            var mapSize = 256;
 
             var map = new Tile[mapSize, mapSize];
 

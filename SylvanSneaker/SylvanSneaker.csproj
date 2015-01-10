@@ -38,6 +38,7 @@
     <Compile Include="Audio\AudioManager.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="Core\CollisionResolver.cs" />
     <Compile Include="Core\Element.cs" />
     <Compile Include="Core\ElementManager.cs" />
     <Compile Include="Core\Entity.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Core\Controller.cs" />
     <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="Environment\Ground.cs" />
+    <Compile Include="Environment\TileSet.cs" />
     <Compile Include="Environment\WorldLighting.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
