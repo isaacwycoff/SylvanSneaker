@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SylvanSneaker.Environment;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SylvanSneaker.Core
 {
@@ -55,7 +50,6 @@ namespace SylvanSneaker.Core
             this.EntityManager = new EntityManager(this.ElementManager);
         }
 
-
         public void Update(GameTime gameTime)
         {
             var timeElapsed = gameTime.ElapsedGameTime;
@@ -68,5 +62,6 @@ namespace SylvanSneaker.Core
         {
             return EntityManager.Add(type, mapX, mapY, controller);
         }
+
     }
 }
