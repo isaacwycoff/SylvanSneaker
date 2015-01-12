@@ -8,31 +8,29 @@ namespace SylvanSneaker.Core
     class PlayerCamera: Camera
     {
         private IWorld World { get; set; }
-        public Entity AttachedTo { get; set; }
+        private Entity AttachedTo { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
 
         private const int TILE_SIZE = 32;
 
-        public float Scale { get; private set; }
+        private float Scale { get; set; }
 
-        public float MapX
+        private float MapX
         {
             get {
-                // calculate based on AttachedTo
-                return (AttachedTo.MapX - ((ScreenColumns - 2) / 2));
+                return (AttachedTo.MapCoordinates.X - ((ScreenColumns - 2) / 2));
             }
         }
 
-        public float MapY
+        private float MapY
         {
             get { 
-                return (AttachedTo.MapY - ((ScreenRows - 2) / 2));
+                return (AttachedTo.MapCoordinates.Y - ((ScreenRows - 2) / 2));
             }
         }
 
-        public int Width { get; private set; }
-
-        public int Height { get; private set; }
+        private int Width { get; set; }
+        private int Height { get; set; }
 
         public PlayerCamera(IWorld world, Entity attachedTo, SpriteBatch spriteBatch, int width, int height)
         {
@@ -50,12 +48,20 @@ namespace SylvanSneaker.Core
         public int ScreenRows { get; private set; }
         public int ScreenColumns { get; private set; }
 
+        private PixelCoordinates TileAnchor = new PixelCoordinates(0, 0);
 
         private void UpdateZoom()
         {
             this.TileSize = Convert.ToInt32(TILE_SIZE * this.Scale);
             this.ScreenRows = (this.Height / this.TileSize) + 1;
             this.ScreenColumns = (this.Width / this.TileSize) + 1;
+        }
+
+        private PixelCoordinates GetScreenCoordinates(MapCoordinates mapCoordinates)
+        {
+            int x = (int)((mapCoordinates.X - MapX) * TileSize);
+            int y = (int)((mapCoordinates.Y - MapY) * TileSize);
+            return new PixelCoordinates(x, y);
         }
 
         private int GetScreenX(float mapX)
@@ -73,10 +79,12 @@ namespace SylvanSneaker.Core
             var timeElapsed = gameTime.ElapsedGameTime;
             DrawGround();
             DrawElements(timeElapsed);
+            DrawCollisionBoxes(timeElapsed);
         }
 
         private void DrawGround()
         {
+            // TODO: split up this method into more intelligible, smaller methods
             int OffsetX = (int)MapX;
             int OffsetY = (int)MapY;
 
@@ -101,22 +109,32 @@ namespace SylvanSneaker.Core
             }
         }
 
-        public void DrawElements(TimeSpan timeDelta)
+        public void DrawElements(TimeSpan timeDelta)            // TODO: maybe take in a list of elements so we can combine with DrawCollisionBoxes?
         {
             var elements = World.ElementManager.GetElementsInArea(left: MapX - 1, top: MapY - 1, width: this.ScreenColumns, height: this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)
             {
-                DrawAnimatedElement(timeDelta, element);
+                DrawAnimatedElement(element);
             }
         }
 
-        private void DrawAnimatedElement(TimeSpan timeDelta, AnimatedElement element)
+        public void DrawCollisionBoxes(TimeSpan timeDelta)
+        {
+            var elements = World.ElementManager.GetElementsInArea(left: MapX - 1, top: MapY - 1, width: this.ScreenColumns, height: this.ScreenRows); // int top, int left, int width, int height);
+
+            foreach (var element in elements)
+            {
+                DrawCollisionBox(element);
+            }
+        }
+
+        private void DrawAnimatedElement(AnimatedElement element)
         {
             var frame = element.CurrentFrame;
 
-            var tint = GetTint((int)element.MapX, (int)element.MapY);
-            DrawFrame(element.Texture, frame, element.MapX, element.MapY, tint);
+            var tint = GetTint((int)element.MapCoordinates.X, (int)element.MapCoordinates.Y);
+            DrawFrame(element.Texture, frame, element.MapCoordinates, tint);
         }
 
         private Color GetTint(int mapX, int mapY)
@@ -125,17 +143,35 @@ namespace SylvanSneaker.Core
             return new Color(lighting.Red, lighting.Green, lighting.Blue);
         }
 
-        private void DrawFrame(Texture2D texture, AnimationFrame frame, float mapX, float mapY, Color tint)
+        private Color GetTint(MapCoordinates mapCoordinates)
+        {
+            return GetTint((int)mapCoordinates.X, (int)mapCoordinates.Y);
+        }
+
+        private void DrawCollisionBox(AnimatedElement element)
+        {
+
+            var sourceRect = new Rectangle(294, 34, 1, 1);  // JANKOTRONICS - this refers to a specific pixel in knight_sword
+            var white = new Color(1f, 1f, 1f, 0.3f);
+            var frame = element.CurrentFrame;
+
+            var anchor = new PixelCoordinates(0, 0);
+            var destRect = GetScreenRectangle(element.MapCoordinates, anchor, 20, 20);
+
+            DrawSprite(element.Texture, sourceRect, destRect, white); 
+        }
+
+        private void DrawFrame(Texture2D texture, AnimationFrame frame, MapCoordinates mapCoordinates, Color tint)  // float mapX, float mapY, Color tint)
         {
             var sourceRect = frame.Rectangle;
-            var destRect = GetScreenRectangle(mapX, mapY, sourceRect.Width, sourceRect.Height);
+            var destRect = GetScreenRectangle(mapCoordinates, frame.Anchor, sourceRect.Width, sourceRect.Height);
             DrawSprite(texture, sourceRect, destRect, tint, frame.Flipped);
         }
 
-        private Rectangle GetScreenRectangle(float mapX, float mapY, int rawWidth, int rawHeight)
+        private Rectangle GetScreenRectangle(MapCoordinates mapCoordinates, PixelCoordinates anchor, int rawWidth, int rawHeight)
         {
-            var screenX = GetScreenX(mapX);
-            var screenY = GetScreenY(mapY);
+            var screenX = GetScreenX(mapCoordinates.X) - anchor.X;
+            var screenY = GetScreenY(mapCoordinates.Y) - anchor.Y;
 
             var screenWidth = (int)(rawWidth * this.Scale);
             var screenHeight = (int)(rawHeight * this.Scale);
@@ -145,7 +181,8 @@ namespace SylvanSneaker.Core
 
         private void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint)
         {
-            var destRect = GetScreenRectangle(mapX, mapY, TileSize, TileSize);
+            var mapCoordinates = new MapCoordinates(mapX, mapY);
+            var destRect = GetScreenRectangle(mapCoordinates, TileAnchor, TileSize, TileSize);
             DrawSprite(texture, sourceRect, destRect, tint);
         }
 

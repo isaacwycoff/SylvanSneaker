@@ -1,14 +1,11 @@
-﻿using SylvanSneaker.Sandbox;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SylvanSneaker.Core;
 
 namespace SylvanSneaker
 {
     public interface WorldElement: Element
     {
-        float MapX { get; }
-        float MapY { get; }
+        MapCoordinates MapCoordinates { get; }
+        // float MapX { get; }
+        // float MapY { get; }
     }
 }

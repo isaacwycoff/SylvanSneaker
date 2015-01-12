@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using SylvanSneaker.Audio;
+using SylvanSneaker.Controllers;
 using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
 using SylvanSneaker.Input;
@@ -76,6 +77,8 @@ namespace SylvanSneaker
             this.World = new World(this.TextureManager);
 
             this.Player = World.AddEntity(type: EntityType.Knight, mapX: 1f, mapY: 1f, controller: this.Controller);
+            World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 3f, controller: new MonsterController());
+            World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 5f, controller: new MonsterController());
 
             this.Camera = new PlayerCamera(this.World, this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
         }

@@ -23,12 +23,12 @@ namespace SylvanSneaker.Core
 
             foreach (var element in AnimatedElements)
             {
-                if(element.MapY > top + height)
+                if(element.MapCoordinates.Y > top + height)
                 {
                     break;          // we've passed all of the elemnts within the area
                 }
 
-                if (element.MapY > top && element.MapX > left && element.MapX < left + width)
+                if (element.MapCoordinates.Y > top && element.MapCoordinates.X > left && element.MapCoordinates.X < left + width)
                 {
                     elementsInArea.Add(element);
                 }
@@ -36,10 +36,10 @@ namespace SylvanSneaker.Core
             return elementsInArea;
         }
 
-        public AnimatedElement Add(float mapX, float mapY, int textureId)
+        public AnimatedElement Add(MapCoordinates mapCoordinates, int textureId)
         {
             var texture = TextureManager[textureId];
-            var element = new AnimatedElement(texture, mapX, mapY);
+            var element = new AnimatedElement(texture, mapCoordinates);      // mapCoordinates.X, mapCoordinates.Y);
             AnimatedElements.Add(element);
             return element;
         }

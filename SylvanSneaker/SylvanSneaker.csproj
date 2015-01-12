@@ -36,9 +36,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Audio\AudioManager.cs" />
+    <Compile Include="Collision\CollisionBox.cs" />
+    <Compile Include="Controllers\MonsterController.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Core\Camera.cs" />
-    <Compile Include="Core\CollisionResolver.cs" />
+    <Compile Include="Core\ActionResolver.cs" />
     <Compile Include="Core\Element.cs" />
     <Compile Include="Core\ElementManager.cs" />
     <Compile Include="Core\Entity.cs" />

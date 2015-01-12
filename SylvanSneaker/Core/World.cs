@@ -21,13 +21,17 @@ namespace SylvanSneaker.Core
         public ElementManager ElementManager { get; private set; }
         public EntityManager EntityManager { get; private set; }
 
+        private ActionResolver Resolver { get; set; }
+
+        /*
         public World(TileSet tileSet, Ground ground, ElementManager elementManager, EntityManager entityManager)
         {
             this.TileSet = tileSet;
             this.Ground = ground;
             this.ElementManager = elementManager;
             this.EntityManager = entityManager;
-        }
+            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground);        // this seems tangled
+        } */
 
         public World(TextureManager textureManager)
         {
@@ -48,6 +52,8 @@ namespace SylvanSneaker.Core
             this.ElementManager = new ElementManager(textureManager);
 
             this.EntityManager = new EntityManager(this.ElementManager);
+
+            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground);        // this seems tangled
         }
 
         public void Update(GameTime gameTime)
@@ -60,8 +66,7 @@ namespace SylvanSneaker.Core
 
         public Entity AddEntity(EntityType type, float mapX, float mapY, Controller controller)
         {
-            return EntityManager.Add(type, mapX, mapY, controller);
+            return EntityManager.Add(type, mapX, mapY, controller, Resolver);
         }
-
     }
 }

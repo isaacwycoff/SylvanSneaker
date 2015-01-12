@@ -1,4 +1,6 @@
-﻿using SylvanSneaker.Core;
+﻿using Microsoft.Xna.Framework;
+using SylvanSneaker.Collision;
+using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
 using SylvanSneaker.Sandbox;
 using System;
@@ -29,21 +31,22 @@ namespace SylvanSneaker
         Action CurrentAction;
 
         private EntityType Type;
-        public float MapX { get; private set; }
-        public float MapY { get; private set; }
+        public MapCoordinates MapCoordinates { get; private set; }
         public Camera Camera { private get; set; }
 
         private int WalkSpeed { get; set; }
 
+        private ActionResolver Resolver { get; set; }
         private ElementManager ElementManager { get; set; }
         private AnimatedElement Element { get; set; }
+        private CollisionBox CollisionBox { get; set; }
         // we need access to the content manager
 
-        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager, Direction direction = Direction.South)
+        public BasicEntity(EntityType type, float mapX, float mapY, ActionResolver resolver, ElementManager elementManager, Direction direction = Direction.South)
         {
             this.Type = type;
-            this.MapX = mapX;
-            this.MapY = mapY;
+            this.MapCoordinates = new MapCoordinates(mapX, mapY);
+            this.Resolver = resolver;
             this.ElementManager = elementManager;
 
             this.CurrentDirection = direction;
@@ -52,7 +55,7 @@ namespace SylvanSneaker
 
             var texture = TextureName.KNIGHT;
 
-            this.Element = this.ElementManager.Add(MapX, MapY, texture);
+            this.Element = this.ElementManager.Add(this.MapCoordinates, texture);
         }
 
         public void Update(TimeSpan timeDelta)
@@ -66,8 +69,7 @@ namespace SylvanSneaker
                 Idle(timeDelta);
             }
 
-            this.Element.MapX = this.MapX;
-            this.Element.MapY = this.MapY;
+            this.Element.MapCoordinates = MapCoordinates;
         }
 
         private void Idle(TimeSpan timeDelta)
@@ -97,22 +99,25 @@ namespace SylvanSneaker
 
             var walkDistance = (float)(WalkSpeed * timeDelta.TotalSeconds);
 
+            var diffMapX = 0f;
+            var diffMapY = 0f;
+
             if (CurrentDirection.HasFlag(Direction.South))
             {
                 Element.CurrentAnimation = AnimationId.WalkSouth;
                 if (CurrentDirection.HasFlag(Direction.East))
                 {
-                    this.MapY += (walkDistance * Cos45);
-                    this.MapX += (walkDistance * Cos45);
+                    diffMapX = walkDistance * Cos45;
+                    diffMapY = walkDistance * Cos45;
                 }
                 else if (CurrentDirection.HasFlag(Direction.West))
                 {
-                    this.MapY += (walkDistance * Cos45);
-                    this.MapX -= (walkDistance * Cos45);
+                    diffMapX = -(walkDistance * Cos45);
+                    diffMapY = walkDistance * Cos45;
                 }
                 else
                 {
-                    this.MapY += walkDistance;
+                    diffMapY = walkDistance;
                 }
             }
             else if (CurrentDirection.HasFlag(Direction.North))
@@ -120,29 +125,37 @@ namespace SylvanSneaker
                 Element.CurrentAnimation = AnimationId.WalkNorth;
                 if (CurrentDirection.HasFlag(Direction.East))
                 {
-                    this.MapY -= (walkDistance * Cos45);
-                    this.MapX += (walkDistance * Cos45);
+                    diffMapX = walkDistance * Cos45;
+                    diffMapY = -(walkDistance * Cos45);
                 }
                 else if (CurrentDirection.HasFlag(Direction.West))
                 {
-                    this.MapY -= (walkDistance * Cos45);
-                    this.MapX -= (walkDistance * Cos45);
+                    diffMapX = -(walkDistance * Cos45);
+                    diffMapY = -(walkDistance * Cos45);
                 }
                 else
                 {
-                    this.MapY -= walkDistance;
+                    diffMapY = -walkDistance;
                 }
             }
             else if (CurrentDirection.HasFlag(Direction.East))
             {
                 Element.CurrentAnimation = AnimationId.WalkEast;
-                this.MapX += walkDistance;
+                diffMapX = walkDistance;
             }
             else if (CurrentDirection.HasFlag(Direction.West))
             {
                 Element.CurrentAnimation = AnimationId.WalkWest;
-                this.MapX -= walkDistance;
+                diffMapX = -walkDistance;
             }
+
+            AttemptToMoveInDirection(diffMapX, diffMapY);
+        }
+
+        private void AttemptToMoveInDirection(float diffMapX, float diffMapY)
+        {
+            var diffCoordinates = new MapCoordinates(diffMapX, diffMapY);
+            this.MapCoordinates = this.Resolver.AttemptToMove(this.MapCoordinates, diffCoordinates);
         }
 
         public void SendCommand(EntityCommand command)

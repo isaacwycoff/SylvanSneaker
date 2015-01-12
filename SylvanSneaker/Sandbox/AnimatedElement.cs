@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SylvanSneaker.Core;
 using System;
 using System.Collections.Generic;
 
@@ -22,8 +23,7 @@ namespace SylvanSneaker.Sandbox
     {
         public Texture2D Texture { get; private set; }
 
-        public float MapX { get; set; }
-        public float MapY { get; set; }
+        public MapCoordinates MapCoordinates { get; set; }
 
         private Dictionary<AnimationId, Animation> AnimationLookup { get; set; }
 
@@ -31,9 +31,10 @@ namespace SylvanSneaker.Sandbox
 
         public int AnimationTime { get; private set; }              // time in milliseconds since start of animation
 
-        public AnimatedElement(Texture2D texture, float mapX, float mapY)
+        public AnimatedElement(Texture2D texture, MapCoordinates mapCoordinates)        // float mapX, float mapY)
         {
             this.Texture = texture;
+            this.MapCoordinates = mapCoordinates;
 
             // walk south animation:
             var walkSouth = new Animation(
@@ -197,7 +198,7 @@ namespace SylvanSneaker.Sandbox
             // If other is not a valid object reference, this instance is greater. 
             if (other == null) return 1;
 
-            return this.MapY.CompareTo(other.MapY);
+            return this.MapCoordinates.Y.CompareTo(other.MapCoordinates.Y);
         }
     }
 
@@ -207,16 +208,31 @@ namespace SylvanSneaker.Sandbox
         public int Duration { get; private set; }
         public bool Flipped { get; private set; }
 
-        public int AnchorX { get; private set; }
-        public int AnchorY { get; private set; }
+        public PixelCoordinates Anchor { get; private set; }
+
+        // public int AnchorX { get; private set; }
+        // public int AnchorY { get; private set; }
 
         public AnimationFrame(int left, int top, int width, int height, int anchorX, int anchorY, int duration, bool flipped = false)
         {
             this.Rectangle = new Rectangle(left, top, width, height);
-            this.AnchorX = anchorX;
-            this.AnchorY = anchorY;
+            this.Anchor = new PixelCoordinates(anchorX, anchorY);
+            // this.AnchorX = anchorX;
+            // this.AnchorY = anchorY;
             this.Duration = duration;
             this.Flipped = flipped;
+        }
+    }
+
+    public class PixelCoordinates
+    {
+        public int X { get; private set; }
+        public int Y { get; private set; }
+
+        public PixelCoordinates(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
         }
     }
 

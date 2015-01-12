@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylvanSneaker.Core;
+using System;
 
 namespace SylvanSneaker.Environment
 {
@@ -36,8 +37,11 @@ namespace SylvanSneaker.Environment
             }
         }
 
-        public float MapX { get { return 0f; } }
-        public float MapY { get { return 0f; } }
+        private MapCoordinates _MapCoordinates = new MapCoordinates(0f, 0f);
+        public MapCoordinates MapCoordinates { get { return _MapCoordinates; } }
+
+        // public float MapX { get { return 0f; } }
+        // public float MapY { get { return 0f; } }
 
         public BasicGround(Tile[,] map)
         {

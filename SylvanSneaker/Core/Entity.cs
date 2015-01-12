@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylvanSneaker.Core;
+using System;
 
 namespace SylvanSneaker
 {
@@ -14,8 +15,10 @@ namespace SylvanSneaker
 
     public interface Entity
     {
-        float MapX { get; }
-        float MapY { get; }
+        // float MapX { get; }
+        // float MapY { get; }
+
+        MapCoordinates MapCoordinates { get; }
 
         void Update(TimeSpan timeDelta);
         void SendCommand(EntityCommand command);
