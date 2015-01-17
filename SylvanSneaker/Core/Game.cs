@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Media;
 using SylvanSneaker.Audio;
 using SylvanSneaker.Controllers;
 using SylvanSneaker.Core;
-using SylvanSneaker.Environment;
 using SylvanSneaker.Input;
 using SylvanSneaker.UI;
 using System;
