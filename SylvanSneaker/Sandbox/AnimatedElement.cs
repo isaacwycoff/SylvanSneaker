@@ -210,15 +210,10 @@ namespace SylvanSneaker.Sandbox
 
         public PixelCoordinates Anchor { get; private set; }
 
-        // public int AnchorX { get; private set; }
-        // public int AnchorY { get; private set; }
-
         public AnimationFrame(int left, int top, int width, int height, int anchorX, int anchorY, int duration, bool flipped = false)
         {
             this.Rectangle = new Rectangle(left, top, width, height);
             this.Anchor = new PixelCoordinates(anchorX, anchorY);
-            // this.AnchorX = anchorX;
-            // this.AnchorY = anchorY;
             this.Duration = duration;
             this.Flipped = flipped;
         }

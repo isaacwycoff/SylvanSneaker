@@ -36,8 +36,7 @@ namespace SylvanSneaker.Input
         public EntityCommand UpdateGame(GameTime gameTime)
         {
             /*
-            GamePad.GetState().Buttons(
-            GamePadG                
+            GamePad.GetState()
               */
             EntityCommand command = 0;
 

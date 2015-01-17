@@ -39,7 +39,7 @@ namespace SylvanSneaker.Core
             this.SpriteBatch = spriteBatch;
             this.Width = width;
             this.Height = height;
-            this.Scale = 2.0f;
+            this.Scale = 1.0f;
 
             this.UpdateZoom();
         }
@@ -53,8 +53,8 @@ namespace SylvanSneaker.Core
         private void UpdateZoom()
         {
             this.TileSize = Convert.ToInt32(TILE_SIZE * this.Scale);
-            this.ScreenRows = (this.Height / this.TileSize) + 1;
-            this.ScreenColumns = (this.Width / this.TileSize) + 1;
+            this.ScreenRows = (this.Height / this.TileSize) + 2;
+            this.ScreenColumns = (this.Width / this.TileSize) + 2;
         }
 
         private PixelCoordinates GetScreenCoordinates(MapCoordinates mapCoordinates)
@@ -66,20 +66,34 @@ namespace SylvanSneaker.Core
 
         private int GetScreenX(float mapX)
         {
-            return (int)((mapX - MapX) * TileSize);          // what about offset?
+            return (int)((mapX - MapX) * TileSize);
         }
 
         private int GetScreenY(float mapY)
         {
-            return (int)((mapY - MapY) * TileSize);          // what about offset?
+            return (int)((mapY - MapY) * TileSize);
         }
 
         public void Draw(GameTime gameTime)
         {
+            SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
+                blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
+                samplerState: SamplerState.PointClamp,            // turn off magnification blurring
+                depthStencilState: DepthStencilState.Default,          //
+                rasterizerState: RasterizerState.CullNone,
+                effect: null,
+                transformMatrix: Matrix.CreateScale(2.0f) * Matrix.CreateTranslation(-300f, -300f, 0f));
+
+            // Camera.Draw(gameTime);
+
+
+
             var timeElapsed = gameTime.ElapsedGameTime;
             DrawGround();
             DrawElements(timeElapsed);
             DrawCollisionBoxes(timeElapsed);
+
+            SpriteBatch.End();
         }
 
         private void DrawGround()
@@ -182,7 +196,7 @@ namespace SylvanSneaker.Core
         private void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint)
         {
             var mapCoordinates = new MapCoordinates(mapX, mapY);
-            var destRect = GetScreenRectangle(mapCoordinates, TileAnchor, TileSize, TileSize);
+            var destRect = GetScreenRectangle(mapCoordinates, TileAnchor, sourceRect.Width, sourceRect.Height);
             DrawSprite(texture, sourceRect, destRect, tint);
         }
 

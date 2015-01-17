@@ -34,7 +34,7 @@ namespace SylvanSneaker
         public MapCoordinates MapCoordinates { get; private set; }
         public Camera Camera { private get; set; }
 
-        private int WalkSpeed { get; set; }
+        private float WalkSpeed { get; set; }
 
         private ActionResolver Resolver { get; set; }
         private ElementManager ElementManager { get; set; }
@@ -51,7 +51,7 @@ namespace SylvanSneaker
 
             this.CurrentDirection = direction;
             this.CurrentAction = Action.Idle;
-            this.WalkSpeed = 10;
+            this.WalkSpeed = 0.002f;
 
             var texture = TextureName.KNIGHT;
 
@@ -97,7 +97,7 @@ namespace SylvanSneaker
             // this whole thing makes me feel gross:
             const float Cos45 = (float)0.707;
 
-            var walkDistance = (float)(WalkSpeed * timeDelta.TotalSeconds);
+            var walkDistance = (float)(WalkSpeed * timeDelta.Milliseconds);
 
             var diffMapX = 0f;
             var diffMapY = 0f;

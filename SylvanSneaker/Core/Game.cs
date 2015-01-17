@@ -113,6 +113,7 @@ namespace SylvanSneaker
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
             var timeElapsed = gameTime.ElapsedGameTime;
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -139,26 +140,39 @@ namespace SylvanSneaker
         {
             var timeElapsed = gameTime.ElapsedGameTime;
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Crimson);            // CornflowerBlue);
 
             // begin drawing - XNA 4.0 code 
+
+            Camera.Draw(gameTime);
+
             SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
                 blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
                 samplerState: SamplerState.PointClamp,            // turn off magnification blurring
                 depthStencilState: DepthStencilState.Default,          //
                 rasterizerState: RasterizerState.CullNone);
 
-            Camera.Draw(gameTime);
+            // SpriteBatch.DrawString(this.DevFont, timeElapsed.Milliseconds.ToString(), Vector2.Zero, Color.WhiteSmoke);
 
-            DefaultConsole.SetDebugLine("SNEAK, DAMN YOU!");
+            DefaultConsole.SetDebugLine(String.Format("ms Elapsed: {0}", timeElapsed.Milliseconds));
+
+            if (gameTime.ElapsedGameTime.TotalSeconds > 5.0f && timeElapsed.Milliseconds != 16)
+            {
+                var derp = "DERP!";
+            }
+
+            
             DefaultConsole.WriteLine("TESTING");
             DefaultConsole.Draw(timeElapsed);
 
-            // end drawing:
             SpriteBatch.End();
+
+            // end drawing:
+
 
             base.Draw(gameTime);
         }
+
 
     }
 }
