@@ -15,10 +15,13 @@ namespace SylvanSneaker.Core
     {
         private EntityManager EntityManager { get; set; }
         private Ground Ground { get; set; }
-        public BasicActionResolver(EntityManager entityManager, Ground ground)
+        private int TileSize { get; set; }
+
+        public BasicActionResolver(EntityManager entityManager, Ground ground, int tileSize)
         {
             this.EntityManager = entityManager;
             this.Ground = ground;
+            this.TileSize = tileSize;
         }
 
         public MapCoordinates AttemptToMove(MapCoordinates currentCoordinates, MapCoordinates difference)
@@ -32,7 +35,7 @@ namespace SylvanSneaker.Core
             {
                 actualX = 0f;
             }
-            else if (attemptedPosition.X > Ground.MapWidth)
+            else if (attemptedPosition.X > Ground.MapWidth * TileSize)
             {
                 actualX = Ground.MapWidth;
             }
@@ -40,7 +43,7 @@ namespace SylvanSneaker.Core
             {
                 actualY = 0f;
             }
-            else if (attemptedPosition.Y > Ground.MapHeight)
+            else if (attemptedPosition.Y > Ground.MapHeight * TileSize)
             {
                 actualY = Ground.MapHeight;
             }

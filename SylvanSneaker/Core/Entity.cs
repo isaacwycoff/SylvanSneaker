@@ -15,9 +15,6 @@ namespace SylvanSneaker
 
     public interface Entity
     {
-        // float MapX { get; }
-        // float MapY { get; }
-
         MapCoordinates MapCoordinates { get; }
 
         void Update(TimeSpan timeDelta);

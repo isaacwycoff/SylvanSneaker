@@ -51,7 +51,7 @@ namespace SylvanSneaker
 
             this.CurrentDirection = direction;
             this.CurrentAction = Action.Idle;
-            this.WalkSpeed = 0.002f;
+            this.WalkSpeed = 0.300f;
 
             var texture = TextureName.KNIGHT;
 

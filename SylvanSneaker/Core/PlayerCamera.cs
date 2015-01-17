@@ -18,14 +18,14 @@ namespace SylvanSneaker.Core
         private float MapX
         {
             get {
-                return (AttachedTo.MapCoordinates.X - ((ScreenColumns - 2) / 2));
+                return AttachedTo.MapCoordinates.X;         //  - ((ScreenColumns - 2) / 2));
             }
         }
 
         private float MapY
         {
             get { 
-                return (AttachedTo.MapCoordinates.Y - ((ScreenRows - 2) / 2));
+                return AttachedTo.MapCoordinates.Y;         //  - ((ScreenRows - 2) / 2));
             }
         }
 
@@ -44,25 +44,25 @@ namespace SylvanSneaker.Core
             this.UpdateZoom();
         }
 
-        public int TileSize { get; private set; }
-        public int ScreenRows { get; private set; }
-        public int ScreenColumns { get; private set; }
+        public float TileSize { get; private set; }
+/*        public int ScreenRows { get; private set; }
+        public int ScreenColumns { get; private set; } */
 
         private PixelCoordinates TileAnchor = new PixelCoordinates(0, 0);
 
         private void UpdateZoom()
         {
             this.TileSize = Convert.ToInt32(TILE_SIZE * this.Scale);
-            this.ScreenRows = (this.Height / this.TileSize) + 2;
-            this.ScreenColumns = (this.Width / this.TileSize) + 2;
         }
 
+        /*
         private PixelCoordinates GetScreenCoordinates(MapCoordinates mapCoordinates)
         {
             int x = (int)((mapCoordinates.X - MapX) * TileSize);
             int y = (int)((mapCoordinates.Y - MapY) * TileSize);
             return new PixelCoordinates(x, y);
         }
+        */
 
         private int GetScreenX(float mapX)
         {
@@ -76,17 +76,16 @@ namespace SylvanSneaker.Core
 
         public void Draw(GameTime gameTime)
         {
+            var cameraTranslation = this.GetCameraTranslation();        //  Matrix.CreateTranslation(-(this.AttachedTo.MapCoordinates.X * 2f), -(this.AttachedTo.MapCoordinates.Y * 2f), 0f);
+            var zoomTranslation = Matrix.CreateScale(2f);
+
             SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
                 blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
-                samplerState: SamplerState.PointClamp,            // turn off magnification blurring
+                samplerState: SamplerState.PointClamp,                                // samplerState: SamplerState.PointClamp,            // turn off magnification blurring
                 depthStencilState: DepthStencilState.Default,          //
                 rasterizerState: RasterizerState.CullNone,
                 effect: null,
-                transformMatrix: Matrix.CreateScale(2.0f) * Matrix.CreateTranslation(-300f, -300f, 0f));
-
-            // Camera.Draw(gameTime);
-
-
+                transformMatrix: zoomTranslation * cameraTranslation);     // Matrix.CreateTranslation(0f, 0f, 0f));
 
             var timeElapsed = gameTime.ElapsedGameTime;
             DrawGround();
@@ -96,36 +95,38 @@ namespace SylvanSneaker.Core
             SpriteBatch.End();
         }
 
+        private Matrix GetCameraTranslation()
+        {
+            var xOffset = AttachedTo.MapCoordinates.X - (float)this.Width / 4f; // - (this.Width);       // (this.ScreenColumns / 2 * TileSize);  // 100f;  // (this.ScreenColumns / 2);
+            var yOffset = AttachedTo.MapCoordinates.Y - (float)this.Height / 4f; //  -(this.Height);          // (this.ScreenRows / 2 * TileSize);   //  100f;  //  (this.ScreenRows / 2);
+
+            // var matrix = Matrix.CreateTranslation(-xOffsetX * 2, -YOffsetX * 
+
+            return Matrix.CreateTranslation(new Vector3(-xOffset * 2f, -yOffset * 2f, 0f));
+        }
+
         private void DrawGround()
         {
-            // TODO: split up this method into more intelligible, smaller methods
-            int OffsetX = (int)MapX;
-            int OffsetY = (int)MapY;
-
-            int minX = Math.Max(0, -OffsetX);
-            int minY = Math.Max(0, -OffsetY);
-
-            int maxX = Math.Min(this.ScreenColumns, World.Ground.MapWidth - OffsetX);
-            int maxY = Math.Min(this.ScreenRows, World.Ground.MapHeight - OffsetY);
-
-            for (int y = minY; y < maxY; ++y)
+            for (int y = 0; y < 20; ++y)            // World.Ground.MapWidth; ++y)
             {
-                for (int x = minX; x < maxX; ++x)
+                for (int x = 0; x < 20; ++x)            // World.Ground.MapHeight; ++x)
                 {
-                    var tile = World.Ground.Map[x + OffsetX, y + OffsetY];
+                    var tile = World.Ground.Map[x, y];
 
                     var sourceRect = World.TileSet.GetRectangle(tile.DefinitionId);
 
                     var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
 
-                    DrawTile(World.TileSet.Texture, sourceRect, x + OffsetX, y + OffsetY, tint);
+                    DrawTile(World.TileSet.Texture, sourceRect, x, y, tint);
                 }
             }
         }
 
         public void DrawElements(TimeSpan timeDelta)            // TODO: maybe take in a list of elements so we can combine with DrawCollisionBoxes?
         {
-            var elements = World.ElementManager.GetElementsInArea(left: MapX - 1, top: MapY - 1, width: this.ScreenColumns, height: this.ScreenRows); // int top, int left, int width, int height);
+            var elements = World.ElementManager.AnimatedElements;
+
+            // var elements = World.ElementManager.GetElementsInArea(left: MapX - this.Width / 4, top: MapY - this.Height / 4, width: this.Width, height: this.Height);       // this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)
             {
@@ -135,19 +136,20 @@ namespace SylvanSneaker.Core
 
         public void DrawCollisionBoxes(TimeSpan timeDelta)
         {
+            /*
             var elements = World.ElementManager.GetElementsInArea(left: MapX - 1, top: MapY - 1, width: this.ScreenColumns, height: this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)
             {
                 DrawCollisionBox(element);
-            }
+            } */
         }
 
         private void DrawAnimatedElement(AnimatedElement element)
         {
             var frame = element.CurrentFrame;
 
-            var tint = GetTint((int)element.MapCoordinates.X, (int)element.MapCoordinates.Y);
+            var tint = GetTint((int)(element.MapCoordinates.X / TileSize), (int)(element.MapCoordinates.Y / TileSize));
             DrawFrame(element.Texture, frame, element.MapCoordinates, tint);
         }
 
@@ -164,7 +166,7 @@ namespace SylvanSneaker.Core
 
         private void DrawCollisionBox(AnimatedElement element)
         {
-
+            /*
             var sourceRect = new Rectangle(294, 34, 1, 1);  // JANKOTRONICS - this refers to a specific pixel in knight_sword
             var white = new Color(1f, 1f, 1f, 0.3f);
             var frame = element.CurrentFrame;
@@ -173,13 +175,13 @@ namespace SylvanSneaker.Core
             var destRect = GetScreenRectangle(element.MapCoordinates, anchor, 20, 20);
 
             DrawSprite(element.Texture, sourceRect, destRect, white); 
+            */
         }
 
         private void DrawFrame(Texture2D texture, AnimationFrame frame, MapCoordinates mapCoordinates, Color tint)  // float mapX, float mapY, Color tint)
         {
             var sourceRect = frame.Rectangle;
-            var destRect = GetScreenRectangle(mapCoordinates, frame.Anchor, sourceRect.Width, sourceRect.Height);
-            DrawSprite(texture, sourceRect, destRect, tint, frame.Flipped);
+            DrawSprite(texture, new Vector2(mapCoordinates.X, mapCoordinates.Y), sourceRect, tint, frame.Flipped); 
         }
 
         private Rectangle GetScreenRectangle(MapCoordinates mapCoordinates, PixelCoordinates anchor, int rawWidth, int rawHeight)
@@ -193,17 +195,25 @@ namespace SylvanSneaker.Core
             return new Rectangle(screenX, screenY, screenWidth, screenHeight);
         }
 
-        private void DrawTile(Texture2D texture, Rectangle sourceRect, int mapX, int mapY, Color tint)
+        private void DrawTile(Texture2D texture, Rectangle sourceRect, float mapX, float mapY, Color tint)
         {
-            var mapCoordinates = new MapCoordinates(mapX, mapY);
-            var destRect = GetScreenRectangle(mapCoordinates, TileAnchor, sourceRect.Width, sourceRect.Height);
-            DrawSprite(texture, sourceRect, destRect, tint);
+            DrawSprite(texture, new Vector2(mapX * TileSize, mapY * TileSize), sourceRect, tint); 
         }
 
-        private void DrawSprite(Texture2D texture, Rectangle sourceRect, Rectangle destRect, Color tint, bool flipped = false)
+        private void DrawSprite(Texture2D texture, Vector2 position, Rectangle sourceRect, Color tint, bool flipped = false)
         {
             var effect = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            this.SpriteBatch.Draw(texture, drawRectangle: destRect, sourceRectangle: sourceRect, color: tint, effect: effect);
+            var depth = 0f;
+
+            this.SpriteBatch.Draw(
+                texture: texture,
+                position: position,
+                sourceRectangle: sourceRect,
+                color: tint, rotation: 0f,
+                origin: Vector2.Zero,
+                scale: 1.00f,
+                effect: effect,
+                depth: depth);
         }
     }
 }

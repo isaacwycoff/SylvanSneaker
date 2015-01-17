@@ -8,6 +8,7 @@ using SylvanSneaker.Core;
 using SylvanSneaker.Input;
 using SylvanSneaker.UI;
 using System;
+using System.Threading;
 
 namespace SylvanSneaker
 {
@@ -44,6 +45,10 @@ namespace SylvanSneaker
             this.Graphics.PreferredBackBufferWidth = ScreenWidth;
             this.Graphics.PreferredBackBufferHeight = ScreenHeight;
             this.Graphics.IsFullScreen = IsFullScreen;
+
+            this.IsFixedTimeStep = false;
+
+            this.Graphics.SynchronizeWithVerticalRetrace = false;
 
             Content.RootDirectory = "Content";
         }
@@ -123,6 +128,8 @@ namespace SylvanSneaker
             World.Update(gameTime);
 
             base.Update(gameTime);
+
+            Thread.Sleep(1);
         }
 
         private void UpdateControls(GameTime gameTime)
@@ -153,9 +160,13 @@ namespace SylvanSneaker
 
             // SpriteBatch.DrawString(this.DevFont, timeElapsed.Milliseconds.ToString(), Vector2.Zero, Color.WhiteSmoke);
 
-            DefaultConsole.SetDebugLine(String.Format("ms Elapsed: {0}", timeElapsed.Milliseconds));
+            // DefaultConsole.SetDebugLine(String.Format("ms Elapsed: {0}", timeElapsed.Milliseconds));
 
-            if (gameTime.ElapsedGameTime.TotalSeconds > 5.0f && timeElapsed.Milliseconds != 16)
+            var framesPerSecond = (1000 / (timeElapsed.Milliseconds + 1));
+
+            DefaultConsole.SetDebugLine(String.Format("Frames per Second: {0}", framesPerSecond));
+
+            if (gameTime.TotalGameTime.TotalSeconds > 5.0f && framesPerSecond < 50)     // timeElapsed.Milliseconds != 16)
             {
                 var derp = "DERP!";
             }

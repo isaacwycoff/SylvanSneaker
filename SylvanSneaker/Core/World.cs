@@ -23,23 +23,13 @@ namespace SylvanSneaker.Core
 
         private ActionResolver Resolver { get; set; }
 
-        /*
-        public World(TileSet tileSet, Ground ground, ElementManager elementManager, EntityManager entityManager)
-        {
-            this.TileSet = tileSet;
-            this.Ground = ground;
-            this.ElementManager = elementManager;
-            this.EntityManager = entityManager;
-            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground);        // this seems tangled
-        } */
-
         public World(TextureManager textureManager)
         {
             var tileSize = 32;
 
             var tileDefinitions = new TileDefinition[5] {
-                new TileDefinition(0, 2),
-                new TileDefinition(0, 1),
+                new TileDefinition(2, 3),
+                new TileDefinition(3, 3),
                 new TileDefinition(0, 2),
                 new TileDefinition(0, 3),
                 new TileDefinition(0, 4),
@@ -53,7 +43,7 @@ namespace SylvanSneaker.Core
 
             this.EntityManager = new EntityManager(this.ElementManager);
 
-            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground);        // this seems tangled
+            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground, tileSize);        // this seems tangled
         }
 
         public void Update(GameTime gameTime)
