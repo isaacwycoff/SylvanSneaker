@@ -41,89 +41,66 @@ namespace SylvanSneaker.Sandbox
             // walk south animation:
             var walkSouth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(30, 669, 64, 53, 32, 53, animSpeed),
-                    new AnimationFrame(95, 669, 63, 53, 32, 53, animSpeed),
-                    new AnimationFrame(161, 669, 63, 53, 32, 53, animSpeed),
-                    new AnimationFrame(95, 669, 63, 53, 32, 53, animSpeed),
+                    new AnimationFrame(30, 669, 64, 53, 32, 43, animSpeed),
+                    new AnimationFrame(95, 669, 63, 53, 32, 43, animSpeed),
+                    new AnimationFrame(161, 669, 63, 53, 32, 43, animSpeed),
+                    new AnimationFrame(95, 669, 63, 53, 32, 43, animSpeed),
                     }
                 );
 
             var idleSouth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(30, 669, 64, 53, 32, 53, 1000),
+                    new AnimationFrame(30, 669, 64, 53, 32, 43, 1000),
                     });
 
             var walkEastFrames = new AnimationFrame[]
             {
-                new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed),
-                new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed),
-                new AnimationFrame(105, 148, 39, 53, 20, 53, animSpeed),
-                new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed),
+                new AnimationFrame(24, 148, 39, 53, 20,  43, animSpeed),
+                new AnimationFrame(62, 148, 39, 53, 20,  43, animSpeed),
+                new AnimationFrame(105, 148, 39, 53, 20, 43, animSpeed),
+                new AnimationFrame(152, 148, 39, 53, 20, 43, animSpeed),
             };
 
             var walkEast = new Animation(
                 new AnimationFrame[] {
-                    walkEastFrames[0],
-                    walkEastFrames[2],
-                    walkEastFrames[3],
-                    walkEastFrames[1],
-                    /*
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(105, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed), */
-                    /*
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed),
-
-                    new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed), */
+                        walkEastFrames[0],
+                        walkEastFrames[2],
+                        walkEastFrames[3],
+                        walkEastFrames[1],
                     }
                 );
 
-/*
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed),
-                    new AnimationFrame(105, 148, 39, 53, 20, 53, animSpeed),
-*/
-
             var idleEast = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed),
+                    new AnimationFrame(24, 148, 39, 53, 20, 43, animSpeed),
                     });
 
             var walkNorth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(29, 400, 55, 63, 27, 63, animSpeed),
-                    new AnimationFrame(82, 400, 55, 63, 27, 63, animSpeed),
-                    new AnimationFrame(140, 400, 55, 63, 27, 63, animSpeed),
-                    new AnimationFrame(196, 400, 55, 63, 27, 63, animSpeed),
-                    new AnimationFrame(82, 400, 55, 63, 27, 63, animSpeed),
+                    new AnimationFrame(29, 400, 55, 63, 27,  43, animSpeed),
+                    new AnimationFrame(82, 400, 55, 63, 27,  43, animSpeed),
+                    new AnimationFrame(140, 400, 55, 63, 27, 43, animSpeed),
+                    new AnimationFrame(196, 400, 55, 63, 27, 43, animSpeed),
+                    new AnimationFrame(82, 400, 55, 63, 27,  43, animSpeed),
                     }
                 );
 
             var idleNorth = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(29, 400, 55, 63, 27, 63, animSpeed),
+                    new AnimationFrame(29, 400, 55, 63, 27, 43, animSpeed),
                     });
 
             var walkWest = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(105, 148, 39, 53, 20, 53, animSpeed, true),
-/*
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(105, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(152, 148, 39, 53, 20, 53, animSpeed, true),
-                    new AnimationFrame(62, 148, 39, 53, 20, 53, animSpeed, true), */
+                    new AnimationFrame(24, 148, 39, 53, 20,  43, animSpeed, true),
+                    new AnimationFrame(62, 148, 39, 53, 20,  43, animSpeed, true),
+                    new AnimationFrame(105, 148, 39, 53, 20, 43, animSpeed, true),
                     }
                 );
 
             var idleWest = new Animation(
                 new AnimationFrame[] {
-                    new AnimationFrame(24, 148, 39, 53, 20, 53, 250, true),
+                    new AnimationFrame(24, 148, 39, 53, 20, 43, 250, true),
                     });
 
             this.AnimationLookup = new Dictionary<AnimationId, Animation>();

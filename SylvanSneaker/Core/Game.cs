@@ -53,12 +53,6 @@ namespace SylvanSneaker
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
             base.Initialize();
@@ -87,10 +81,6 @@ namespace SylvanSneaker
             this.Camera = new PlayerCamera(this.World, this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -101,20 +91,11 @@ namespace SylvanSneaker
             CurrentSong = Content.Load<Song>("Songs/trim_loop2");
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
 
@@ -154,23 +135,13 @@ namespace SylvanSneaker
 
             SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
                 blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
-                samplerState: SamplerState.PointClamp,            // turn off magnification blurring
-                depthStencilState: DepthStencilState.Default,          //
+                samplerState: SamplerState.PointWrap,            // turn off magnification blurring
+                depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
-
-            // SpriteBatch.DrawString(this.DevFont, timeElapsed.Milliseconds.ToString(), Vector2.Zero, Color.WhiteSmoke);
-
-            // DefaultConsole.SetDebugLine(String.Format("ms Elapsed: {0}", timeElapsed.Milliseconds));
 
             var framesPerSecond = (1000 / (timeElapsed.Milliseconds + 1));
 
             DefaultConsole.SetDebugLine(String.Format("Frames per Second: {0}", framesPerSecond));
-
-            if (gameTime.TotalGameTime.TotalSeconds > 5.0f && framesPerSecond < 50)     // timeElapsed.Milliseconds != 16)
-            {
-                var derp = "DERP!";
-            }
-
             
             DefaultConsole.WriteLine("TESTING");
             DefaultConsole.Draw(timeElapsed);
@@ -182,6 +153,8 @@ namespace SylvanSneaker
 
             base.Draw(gameTime);
         }
+
+
 
 
     }
