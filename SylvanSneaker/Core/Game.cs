@@ -156,7 +156,6 @@ namespace SylvanSneaker
 
             // end drawing:
 
-
             base.Draw(gameTime);
         }
 

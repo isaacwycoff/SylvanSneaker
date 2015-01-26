@@ -5,7 +5,7 @@ namespace SylvanSneaker.Core
 {
     public interface IWorld
     {
-        Ground Ground { get; }
+        TileMap Ground { get; }
         TileSet TileSet { get; }
         ElementManager ElementManager { get; }
         EntityManager EntityManager { get; }
@@ -15,7 +15,7 @@ namespace SylvanSneaker.Core
 
     public class World : IWorld
     {
-        public Ground Ground { get; private set; }
+        public TileMap Ground { get; private set; }
         public TileSet TileSet { get; private set; }
 
         public ElementManager ElementManager { get; private set; }

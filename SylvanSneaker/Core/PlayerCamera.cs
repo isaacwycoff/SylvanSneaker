@@ -11,6 +11,8 @@ namespace SylvanSneaker.Core
         private Entity AttachedTo { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
 
+        private DumbTriangleDrawer TriangleDrawer { get; set; }
+
         private float MapX
         {
             get {
@@ -38,6 +40,8 @@ namespace SylvanSneaker.Core
             this.Width = width;
             this.Height = height;
             this.Zoom = zoom;
+
+            this.TriangleDrawer = new DumbTriangleDrawer(spriteBatch);
         }
 
         public float TileSize = 32;     //  { get { return TILE_SIZE; } }  
@@ -64,56 +68,9 @@ namespace SylvanSneaker.Core
 
             SpriteBatch.End();
 
-            DrawDumbTriangles(zoomTranslation * cameraTranslation);
-        }
+            this.TriangleDrawer.DrawDumbTriangles(zoomTranslation * cameraTranslation, this.Width, this.Height);
 
-        private float DumbRotation = 0f;
-
-        private void DrawDumbTriangles(Matrix cameraTranslation)
-        {
-            var GraphicsDevice = SpriteBatch.GraphicsDevice;
-
-            VertexBuffer vertexBuffer;
-
-            BasicEffect basicEffect;
-            Matrix world = Matrix.CreateRotationZ(DumbRotation) * cameraTranslation;           //  Matrix.CreateTranslation(0, 0, 0);   
-
-            Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 100), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, this.Width, this.Height, 0, 100f, -100f);
-
-            basicEffect = new BasicEffect(GraphicsDevice);
-
-            var red = new Color(Color.Red, 1.0f);
-            var green = new Color(Color.DarkOrange, 0.0f);
-            var blue = new Color(Color.Blue, 1.0f);
-
-            VertexPositionColor[] vertices = new VertexPositionColor[] {
-                new VertexPositionColor(new Vector3(MapX, MapY, 0), red),
-                new VertexPositionColor(new Vector3(+100f + MapX, 200f + MapY, 0), green),
-                new VertexPositionColor(new Vector3(-100f + MapX, 200f + MapY, 0), green),
-            };
-
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
-
-            basicEffect.World = world;
-            basicEffect.View = view;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-            GraphicsDevice.BlendState = BlendState.Additive;
-
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 1);
-            }
+            // DrawDumbTriangles(zoomTranslation * cameraTranslation);
         }
 
         private Matrix GetCameraTranslation(float zoom)
@@ -126,13 +83,18 @@ namespace SylvanSneaker.Core
 
         private void DrawGround()
         {
-            for (int y = 0; y < 20; ++y)            // World.Ground.MapWidth; ++y)
+            int minY = Math.Max((int)((MapY - this.Height / 2) / TileSize), 0);
+            int minX = Math.Max((int)(MapX - this.Width / 2), 0);
+            int maxX = Math.Min((int)(MapX + this.Width / 2), World.Ground.MapWidth);
+            int maxY = Math.Min((int)((MapY + this.Height / 2) / TileSize), World.Ground.MapHeight);
+
+            for (int y = minY; y < maxY; ++y)            // World.Ground.MapWidth; ++y)
             {
-                for (int x = 0; x < 20; ++x)            // World.Ground.MapHeight; ++x)
+                for (int x = minX; x < maxX; ++x)            // World.Ground.MapHeight; ++x)
                 {
                     var tile = World.Ground.Map[x, y];
 
-                    var sourceRect = World.TileSet.GetRectangle(tile.DefinitionId);
+                    var sourceRect = World.TileSet.GetRectangle(tile.FloorDefinitionId);
 
                     var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
 
@@ -143,9 +105,7 @@ namespace SylvanSneaker.Core
 
         public void DrawElements(TimeSpan timeDelta)            // TODO: maybe take in a list of elements so we can combine with DrawCollisionBoxes?
         {
-            var elements = World.ElementManager.AnimatedElements;
-
-            // var elements = World.ElementManager.GetElementsInArea(left: MapX - this.Width / 4, top: MapY - this.Height / 4, width: this.Width, height: this.Height);       // this.ScreenRows); // int top, int left, int width, int height);
+            var elements = World.ElementManager.GetElementsInArea(left: MapX - this.Width / 2, top: MapY - this.Height / 2, width: this.Width, height: this.Height);       // this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)
             {

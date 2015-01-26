@@ -15,7 +15,7 @@ namespace SylvanSneaker.Environment
 
         }
 
-        public Ground Generate()
+        public TileMap Generate()
         {
             var mapSize = 256;
 
@@ -27,11 +27,17 @@ namespace SylvanSneaker.Environment
                 {
                     var lighting = (byte)Math.Min(x * 16 + 32, 255);
 
-                    map[x, y] = new Tile(x % 4, new LightLevel(lighting, lighting, lighting));
+                    var lightLevel = new LightLevel(lighting, lighting, lighting);
+
+                    map[x, y] = new Tile(
+                        floorDefinitionId: x % 4, 
+                        wallDefinitionId: 0, 
+                        collision: CollisionType.None, 
+                        lighting: lightLevel);
                 }
             }
 
-            return new BasicGround(map);
+            return new BasicTileMap(map);
         }
 
     }

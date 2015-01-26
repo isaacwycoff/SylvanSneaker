@@ -14,10 +14,10 @@ namespace SylvanSneaker.Core
     public class BasicActionResolver : ActionResolver
     {
         private EntityManager EntityManager { get; set; }
-        private Ground Ground { get; set; }
+        private TileMap Ground { get; set; }
         private int TileSize { get; set; }
 
-        public BasicActionResolver(EntityManager entityManager, Ground ground, int tileSize)
+        public BasicActionResolver(EntityManager entityManager, TileMap ground, int tileSize)
         {
             this.EntityManager = entityManager;
             this.Ground = ground;

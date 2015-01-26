@@ -11,14 +11,14 @@ namespace SylvanSneaker.Environment
         West = 8,
     }
 
-    public interface Ground: WorldElement, WorldLighting
+    public interface TileMap: WorldElement, WorldLighting
     {
         int MapWidth { get; }
         int MapHeight { get; }
         Tile[,] Map { get; }
     }
 
-    internal class BasicGround: Ground
+    internal class BasicTileMap: TileMap
     {
         public Tile[,] Map { get; private set; }
 
@@ -43,7 +43,7 @@ namespace SylvanSneaker.Environment
         // public float MapX { get { return 0f; } }
         // public float MapY { get { return 0f; } }
 
-        public BasicGround(Tile[,] map)
+        public BasicTileMap(Tile[,] map)
         {
             this.Map = map;
         }
@@ -80,15 +80,27 @@ namespace SylvanSneaker.Environment
 
     public class Tile
     {
-        public int DefinitionId { get; private set; }
+        public int FloorDefinitionId { get; private set; }
+        public int WallDefinitionId { get; private set; }
+        public CollisionType Collision { get; private set; }
         public LightLevel Lighting { get; private set; }
 
-        public Tile(int definitionId, LightLevel lighting)
+        public Tile(int floorDefinitionId, int wallDefinitionId, CollisionType collision, LightLevel lighting)
         {
-            this.DefinitionId = definitionId;
+            this.FloorDefinitionId = floorDefinitionId;
+            this.WallDefinitionId = wallDefinitionId;
+            this.Collision = collision;
             this.Lighting = lighting;
         }
     }
+
+    public enum CollisionType
+    {
+        None = 0,
+        BlockGround = 1,
+        BlockAir = 2
+    };
+
 
     public class TileDefinition
     {
