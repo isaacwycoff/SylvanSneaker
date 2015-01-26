@@ -55,6 +55,7 @@
     <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="Environment\Ground.cs" />
     <Compile Include="Environment\TileSet.cs" />
+    <Compile Include="Environment\Walls.cs" />
     <Compile Include="Environment\WorldLighting.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

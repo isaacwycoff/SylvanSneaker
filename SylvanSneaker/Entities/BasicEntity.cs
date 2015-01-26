@@ -51,7 +51,7 @@ namespace SylvanSneaker
 
             this.CurrentDirection = direction;
             this.CurrentAction = Action.Idle;
-            this.WalkSpeed = 0.300f;
+            this.WalkSpeed = 0.200f;
 
             var texture = TextureName.KNIGHT;
 
@@ -97,7 +97,7 @@ namespace SylvanSneaker
             // this whole thing makes me feel gross:
             const float Cos45 = (float)0.707;
 
-            var walkDistance = (float)(WalkSpeed * timeDelta.Milliseconds);
+            var walkDistance = WalkSpeed * (float)(timeDelta.Milliseconds);
 
             var diffMapX = 0f;
             var diffMapY = 0f;

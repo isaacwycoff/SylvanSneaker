@@ -78,7 +78,13 @@ namespace SylvanSneaker
             World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 3f, controller: new MonsterController());
             World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 5f, controller: new MonsterController());
 
-            this.Camera = new PlayerCamera(this.World, this.Player, this.SpriteBatch, ScreenWidth, ScreenHeight);
+            this.Camera = new PlayerCamera(
+                                world: this.World, 
+                                attachedTo: this.Player, 
+                                spriteBatch: this.SpriteBatch, 
+                                width: ScreenWidth, 
+                                height: ScreenHeight, 
+                                zoom: 2f);
         }
 
         protected override void LoadContent()

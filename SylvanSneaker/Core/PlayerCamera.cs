@@ -28,16 +28,16 @@ namespace SylvanSneaker.Core
         private int Width { get; set; }
         private int Height { get; set; }
 
-        public PlayerCamera(IWorld world, Entity attachedTo, SpriteBatch spriteBatch, int width, int height)
+        private float Zoom { get; set; }
+
+        public PlayerCamera(IWorld world, Entity attachedTo, SpriteBatch spriteBatch, int width, int height, float zoom)
         {
             this.World = world;
             this.AttachedTo = attachedTo;
             this.SpriteBatch = spriteBatch;
             this.Width = width;
             this.Height = height;
-            // this.Scale = 1.0f;
-
-            // this.UpdateZoom();
+            this.Zoom = zoom;
         }
 
         public float TileSize = 32;     //  { get { return TILE_SIZE; } }  
@@ -46,10 +46,8 @@ namespace SylvanSneaker.Core
 
         public void Draw(GameTime gameTime)
         {
-            var zoom = 2f;
-
-            var cameraTranslation = this.GetCameraTranslation(zoom);        //  Matrix.CreateTranslation(-(this.AttachedTo.MapCoordinates.X * 2f), -(this.AttachedTo.MapCoordinates.Y * 2f), 0f);
-            var zoomTranslation = Matrix.CreateScale(zoom);
+            var cameraTranslation = this.GetCameraTranslation(Zoom);
+            var zoomTranslation = Matrix.CreateScale(Zoom);
 
             SpriteBatch.Begin(sortMode: SpriteSortMode.Deferred,          // TODO: Research
                 blendState: BlendState.AlphaBlend,              // blend alphas - i.e., transparencies
@@ -58,7 +56,7 @@ namespace SylvanSneaker.Core
                 rasterizerState: RasterizerState.CullNone,
                 effect: null,
                 transformMatrix: zoomTranslation * cameraTranslation
-                );     // Matrix.CreateTranslation(0f, 0f, 0f));
+                );
 
             var timeElapsed = gameTime.ElapsedGameTime;
             DrawGround();
@@ -94,10 +92,7 @@ namespace SylvanSneaker.Core
                 new VertexPositionColor(new Vector3(MapX, MapY, 0), red),
                 new VertexPositionColor(new Vector3(+100f + MapX, 200f + MapY, 0), green),
                 new VertexPositionColor(new Vector3(-100f + MapX, 200f + MapY, 0), green),
-/*                new VertexPositionColor(new Vector3(0f, 0f, 0), red),
-                new VertexPositionColor(new Vector3(0f, 100f, 0), red), */
             };
-
 
             vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.WriteOnly);
             vertexBuffer.SetData<VertexPositionColor>(vertices);
