@@ -7,7 +7,15 @@ using System.Text;
 
 namespace SylvanSneaker.UI
 {
-    public class DevConsole
+    public interface IDevConsole
+    {
+        bool Expanded { get; set; }
+        void Draw(TimeSpan timeDelta);
+        void SetDebugLine(string line);
+        void WriteLine(string line);
+    }
+
+    public class DevConsole : IDevConsole
     {
         private SpriteBatch Batch { get; set; }
         private SpriteFont Font { get; set; }

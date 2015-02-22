@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using SylvanSneaker.Environment;
+using SylvanSneaker.Slots;
+using System;
 
 namespace SylvanSneaker.Core
 {
@@ -21,9 +23,7 @@ namespace SylvanSneaker.Core
         public ElementManager ElementManager { get; private set; }
         public EntityManager EntityManager { get; private set; }
 
-        private ActionResolver Resolver { get; set; }
-
-        public World(TextureManager textureManager)
+        public World()
         {
             var tileSize = 32;
 
@@ -34,16 +34,16 @@ namespace SylvanSneaker.Core
                 new TileDefinition(0, 3),
                 new TileDefinition(0, 4),
             };
-            this.TileSet = new TileSet(textureManager[TextureName.GROUND], tileDefinitions, tileSize);
+            this.TileSet = new TileSet(TextureSlot.GetTexture(TextureName.GROUND), tileDefinitions, tileSize);
 
             var generator = new GroundGenerator();
             this.Ground = generator.Generate();
 
-            this.ElementManager = new ElementManager(textureManager);
+            this.ElementManager = new ElementManager();
 
             this.EntityManager = new EntityManager(this.ElementManager);
 
-            this.Resolver = new BasicActionResolver(this.EntityManager, this.Ground, tileSize);        // this seems tangled
+            PhysicsSlot.Initialize(new BasicActionResolver(this.EntityManager, this.Ground, tileSize));         // TODO: move this somewhere more obvious
         }
 
         public void Update(GameTime gameTime)
@@ -56,7 +56,13 @@ namespace SylvanSneaker.Core
 
         public Entity AddEntity(EntityType type, float mapX, float mapY, Controller controller)
         {
-            return EntityManager.Add(type, mapX, mapY, controller, Resolver);
+            return EntityManager.Add(type, mapX, mapY, controller);
+        }
+
+        public Entity AddEntity(EntityType type, float mapX, float mapY, Func<Controller> getController)
+        {
+            var controller = getController();
+            return EntityManager.Add(type, mapX, mapY, controller);
         }
     }
 }

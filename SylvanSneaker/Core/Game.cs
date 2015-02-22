@@ -6,6 +6,7 @@ using SylvanSneaker.Audio;
 using SylvanSneaker.Controllers;
 using SylvanSneaker.Core;
 using SylvanSneaker.Input;
+using SylvanSneaker.Slots;
 using SylvanSneaker.UI;
 using System;
 using System.Threading;
@@ -17,20 +18,12 @@ namespace SylvanSneaker
         GraphicsDeviceManager Graphics;
         SpriteBatch SpriteBatch;
 
-        TextureManager TextureManager;
-        AudioManager AudioManager;
-        InputManager InputManager;
-
-        IWorld World;
-
         Song CurrentSong;
 
         SpriteFont DevFont;
 
         Entity Player;
-        PlayerController Controller;
-
-        DevConsole DefaultConsole;
+        InputManager Controller;
 
         Camera Camera;
 
@@ -57,29 +50,25 @@ namespace SylvanSneaker
         {
             base.Initialize();
 
-            this.AudioManager = new AudioManager();
-            this.TextureManager = new TextureManager(this.Content);
-            // this.AudioManager.PlaySong(CurrentSong);
+            AudioSlot.Initialize(new AudioManager(this.Content));
+            TextureSlot.Initialize(new TextureManager(this.Content));
+            ConsoleSlot.Initialize(new DevConsole(SpriteBatch, DevFont));
 
-            this.InputManager = new InputManager();
-
-            this.Controller = new PlayerController();
+            this.Controller = new InputManager();
+            UserInputSlot.Initialize(this.Controller);
 
             this.SetupWorld();
-
-            this.DefaultConsole = new DevConsole(SpriteBatch, DevFont);
         }
 
         private void SetupWorld()
         {
-            this.World = new World(this.TextureManager);
+            WorldSlot.Initialize(new World());
 
-            this.Player = World.AddEntity(type: EntityType.Knight, mapX: 1f, mapY: 1f, controller: this.Controller);
-            World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 3f, controller: new MonsterController());
-            World.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 5f, controller: new MonsterController());
+            this.Player = WorldSlot.AddEntity(type: EntityType.Knight, mapX: 1f, mapY: 1f, controller: this.Controller);
+            WorldSlot.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 3f, controller: new MonsterController());
+            WorldSlot.AddEntity(type: EntityType.Zombie, mapX: 3f, mapY: 5f, controller: new MonsterController());
 
             this.Camera = new PlayerCamera(
-                                world: this.World, 
                                 attachedTo: this.Player, 
                                 spriteBatch: this.SpriteBatch, 
                                 width: ScreenWidth, 
@@ -110,19 +99,13 @@ namespace SylvanSneaker
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            UpdateControls(gameTime);
+            UserInputSlot.UpdateGame(gameTime);
 
-            World.Update(gameTime);
+            WorldSlot.Update(gameTime);
 
             base.Update(gameTime);
 
             Thread.Sleep(1);
-        }
-
-        private void UpdateControls(GameTime gameTime)
-        {
-            var keys = Keyboard.GetState().GetPressedKeys();
-            Controller.SendCommand(InputManager.UpdateGame(gameTime));
         }
 
         /// <summary>
@@ -147,20 +130,13 @@ namespace SylvanSneaker
 
             var framesPerSecond = (1000 / (timeElapsed.Milliseconds + 1));
 
-            DefaultConsole.SetDebugLine(String.Format("Frames per Second: {0}", framesPerSecond));
-            
-            DefaultConsole.WriteLine("TESTING");
-            DefaultConsole.Draw(timeElapsed);
+            ConsoleSlot.SetDebugLine(String.Format("Frames per Second: {0}", framesPerSecond));
+            ConsoleSlot.Draw(timeElapsed);
 
             SpriteBatch.End();
 
             // end drawing:
-
             base.Draw(gameTime);
         }
-
-
-
-
     }
 }

@@ -8,7 +8,7 @@ namespace SylvanSneaker.Core
 {
     public interface ActionResolver
     {
-        MapCoordinates AttemptToMove(MapCoordinates currentCoordinates, MapCoordinates difference);
+        MapCoordinates AttemptToMove(MapCoordinates currentCoordinates, MapCoordinates difference);     // TODO: how do we know that we're not colliding with ourself? or a friendly object that we should be able to walk through?
     }
 
     public class BasicActionResolver : ActionResolver
@@ -37,7 +37,7 @@ namespace SylvanSneaker.Core
             }
             else if (attemptedPosition.X > Ground.MapWidth * TileSize)
             {
-                actualX = Ground.MapWidth;
+                actualX = Ground.MapWidth * TileSize;
             }
             if (attemptedPosition.Y < 0f)
             {
@@ -45,7 +45,7 @@ namespace SylvanSneaker.Core
             }
             else if (attemptedPosition.Y > Ground.MapHeight * TileSize)
             {
-                actualY = Ground.MapHeight;
+                actualY = Ground.MapHeight * TileSize;
             }
 
             return new MapCoordinates(actualX, actualY);

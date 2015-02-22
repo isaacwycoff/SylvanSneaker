@@ -7,7 +7,12 @@ using System.Text;
 
 namespace SylvanSneaker.Core
 {
-    public class TextureManager
+    public interface ITextureManager
+    {
+        Texture2D this[int id] { get; }
+    }
+
+    public class TextureManager : ITextureManager
     {
         private IDictionary<int, Texture2D> Textures;
         private ContentManager Content;

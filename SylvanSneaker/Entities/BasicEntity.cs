@@ -3,6 +3,7 @@ using SylvanSneaker.Collision;
 using SylvanSneaker.Core;
 using SylvanSneaker.Environment;
 using SylvanSneaker.Sandbox;
+using SylvanSneaker.Slots;
 using System;
 
 namespace SylvanSneaker
@@ -36,17 +37,15 @@ namespace SylvanSneaker
 
         private float WalkSpeed { get; set; }
 
-        private ActionResolver Resolver { get; set; }
         private ElementManager ElementManager { get; set; }
         private AnimatedElement Element { get; set; }
         private CollisionBox CollisionBox { get; set; }
         // we need access to the content manager
 
-        public BasicEntity(EntityType type, float mapX, float mapY, ActionResolver resolver, ElementManager elementManager, Direction direction = Direction.South)
+        public BasicEntity(EntityType type, float mapX, float mapY, ElementManager elementManager, Direction direction = Direction.South)
         {
             this.Type = type;
             this.MapCoordinates = new MapCoordinates(mapX, mapY);
-            this.Resolver = resolver;
             this.ElementManager = elementManager;
 
             this.CurrentDirection = direction;
@@ -155,7 +154,7 @@ namespace SylvanSneaker
         private void AttemptToMoveInDirection(float diffMapX, float diffMapY)
         {
             var diffCoordinates = new MapCoordinates(diffMapX, diffMapY);
-            this.MapCoordinates = this.Resolver.AttemptToMove(this.MapCoordinates, diffCoordinates);
+            this.MapCoordinates = PhysicsSlot.AttemptToMove(this.MapCoordinates, diffCoordinates);
         }
 
         public void SendCommand(EntityCommand command)

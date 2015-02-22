@@ -17,7 +17,7 @@ namespace SylvanSneaker.Environment
 
         public TileMap Generate()
         {
-            var mapSize = 256;
+            var mapSize = 16;
 
             var map = new Tile[mapSize, mapSize];
 

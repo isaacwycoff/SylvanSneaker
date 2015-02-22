@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SylvanSneaker.Sandbox;
+using SylvanSneaker.Slots;
 using System;
 
 namespace SylvanSneaker.Core
 {
     class PlayerCamera: Camera
     {
-        private IWorld World { get; set; }
+        // private IWorld World { get; set; }
         private Entity AttachedTo { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
 
@@ -32,9 +33,9 @@ namespace SylvanSneaker.Core
 
         private float Zoom { get; set; }
 
-        public PlayerCamera(IWorld world, Entity attachedTo, SpriteBatch spriteBatch, int width, int height, float zoom)
+        public PlayerCamera(Entity attachedTo, SpriteBatch spriteBatch, int width, int height, float zoom)
         {
-            this.World = world;
+            // this.World = world;
             this.AttachedTo = attachedTo;
             this.SpriteBatch = spriteBatch;
             this.Width = width;
@@ -84,28 +85,30 @@ namespace SylvanSneaker.Core
         private void DrawGround()
         {
             int minY = Math.Max((int)((MapY - this.Height / 2) / TileSize), 0);
-            int minX = Math.Max((int)(MapX - this.Width / 2), 0);
-            int maxX = Math.Min((int)(MapX + this.Width / 2), World.Ground.MapWidth);
-            int maxY = Math.Min((int)((MapY + this.Height / 2) / TileSize), World.Ground.MapHeight);
+            int minX = Math.Max((int)((MapX - this.Width / 2) / TileSize), 0);
+            int maxX = Math.Min((int)((MapX + this.Width / 2) / TileSize), WorldSlot.TileWidth);
+            int maxY = Math.Min((int)((MapY + this.Height / 2) / TileSize), WorldSlot.TileHeight);
 
             for (int y = minY; y < maxY; ++y)            // World.Ground.MapWidth; ++y)
             {
                 for (int x = minX; x < maxX; ++x)            // World.Ground.MapHeight; ++x)
                 {
-                    var tile = World.Ground.Map[x, y];
+                    var tile = WorldSlot.Map[x, y];
 
-                    var sourceRect = World.TileSet.GetRectangle(tile.FloorDefinitionId);
+                    var sourceRect = WorldSlot.GetTileSourceRect(tile.FloorDefinitionId);
+
+                    // var sourceRect = World.TileSet.GetRectangle(tile.FloorDefinitionId);
 
                     var tint = new Color(tile.Lighting.Red, tile.Lighting.Green, tile.Lighting.Blue, 255);
 
-                    DrawTile(World.TileSet.Texture, sourceRect, x, y, tint);
+                    DrawTile(WorldSlot.GetFloorTexture(), sourceRect, x, y, tint);
                 }
             }
         }
 
         public void DrawElements(TimeSpan timeDelta)            // TODO: maybe take in a list of elements so we can combine with DrawCollisionBoxes?
         {
-            var elements = World.ElementManager.GetElementsInArea(left: MapX - this.Width / 2, top: MapY - this.Height / 2, width: this.Width, height: this.Height);       // this.ScreenRows); // int top, int left, int width, int height);
+            var elements = WorldSlot.GetElementsInArea(left: MapX - this.Width / 2, top: MapY - this.Height / 2, width: this.Width, height: this.Height);       // this.ScreenRows); // int top, int left, int width, int height);
 
             foreach (var element in elements)
             {
@@ -117,19 +120,15 @@ namespace SylvanSneaker.Core
         {
             var frame = element.CurrentFrame;
 
-            var tint = GetTint((int)(element.MapCoordinates.X / TileSize), (int)(element.MapCoordinates.Y / TileSize));
+            var tint = GetTint(new MapCoordinates(element.MapCoordinates.X / (float)TileSize, element.MapCoordinates.Y / (float)TileSize));
+            // var tint = GetTint((int)(element.MapCoordinates.X / TileSize), (int)(element.MapCoordinates.Y / TileSize));
             DrawFrame(element.Texture, frame, element.MapCoordinates, tint);
         }
 
-        private Color GetTint(int mapX, int mapY)
+        private Color GetTint(MapCoordinates coordinates)
         {
-            var lighting = World.Ground.GetLightLevel(mapX, mapY);
+            var lighting = WorldSlot.GetLightLevel(coordinates);
             return new Color(lighting.Red, lighting.Green, lighting.Blue);
-        }
-
-        private Color GetTint(MapCoordinates mapCoordinates)
-        {
-            return GetTint((int)mapCoordinates.X, (int)mapCoordinates.Y);
         }
 
         private void DrawFrame(Texture2D texture, AnimationFrame frame, MapCoordinates mapCoordinates, Color tint)  // float mapX, float mapY, Color tint)

@@ -1,4 +1,5 @@
 ﻿using SylvanSneaker.Sandbox;
+using SylvanSneaker.Slots;
 using System;
 using System.Collections.Generic;
 
@@ -7,11 +8,9 @@ namespace SylvanSneaker.Core
     public class ElementManager
     {
         public List<AnimatedElement> AnimatedElements { get; private set; }
-        private TextureManager TextureManager;
 
-        public ElementManager(TextureManager textureManager)
+        public ElementManager()
         {
-            this.TextureManager = textureManager;
             AnimatedElements = new List<AnimatedElement>();
         }
 
@@ -25,7 +24,7 @@ namespace SylvanSneaker.Core
             {
                 if(element.MapCoordinates.Y > top + height)
                 {
-                    break;          // we've passed all of the elemnts within the area
+                    break;          // we've passed all of the elements within the area
                 }
 
                 if (element.MapCoordinates.Y > top && element.MapCoordinates.X > left && element.MapCoordinates.X < left + width)
@@ -38,8 +37,8 @@ namespace SylvanSneaker.Core
 
         public AnimatedElement Add(MapCoordinates mapCoordinates, int textureId)
         {
-            var texture = TextureManager[textureId];
-            var element = new AnimatedElement(texture, mapCoordinates);      // mapCoordinates.X, mapCoordinates.Y);
+            var texture = TextureSlot.GetTexture(textureId);
+            var element = new AnimatedElement(texture, mapCoordinates);
             AnimatedElements.Add(element);
             return element;
         }
